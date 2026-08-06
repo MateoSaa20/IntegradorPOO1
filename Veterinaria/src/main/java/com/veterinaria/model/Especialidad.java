@@ -24,7 +24,7 @@ public class Especialidad {
         this.detalle = detalle;
     }
 
-    public Long getId() {
+    public Long getIdEspecialidad() {
         return id;
     }
 
@@ -43,4 +43,6 @@ public class Especialidad {
     public void setDetalle(String detalle) {
         this.detalle = detalle;
     }
+
+    
 }

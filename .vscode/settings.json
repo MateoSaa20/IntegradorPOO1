@@ -1,0 +1,16 @@
+{
+    "sqltools.connections": [
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "PostgresSQL",
+            "group": "BaseDatos",
+            "database": "bancos",
+            "username": "postgres",
+            "password": "Mateosaa123"
+        }
+    ]
+}

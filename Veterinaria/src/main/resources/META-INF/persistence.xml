@@ -3,21 +3,47 @@
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
-             https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
+                                 https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
              version="3.2">
 
     <persistence-unit name="VeterinariaPU">
 
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
+      
+        <class>com.veterinaria.model.Cliente</class> 
+        <class>com.veterinaria.model.Mascota</class>
+        <class>com.veterinaria.model.Especie</class>
+        <class>com.veterinaria.model.Raza</class>
+        <class>com.veterinaria.model.Especialidad</class>
+        <class>com.veterinaria.model.EstadoTurno</class>
+        <class>com.veterinaria.model.Turno</class>
+        <class>com.veterinaria.model.Veterinario</class>
+        <class>com.veterinaria.model.Servicio</class>
+        <class>com.veterinaria.model.ServicioConsulta</class>
+        <class>com.veterinaria.model.ServicioGuarderia</class>
+        <class>com.veterinaria.model.ServicioPeluqueria</class>
+        <class>com.veterinaria.model.ServicioVacunacion</class>
+        <class>com.veterinaria.model.Sexo</class>
+        <class>com.veterinaria.model.TipoVacuna</class>
+        <class>com.veterinaria.model.Tratamiento</class>
+        <class>com.veterinaria.model.ItemTurno</class>
+        <class>com.veterinaria.model.DetalleAtencion</class>
+        <class>com.veterinaria.model.DetalleConsulta</class>
+
+
+
         <properties>
 
-            <!-- Conexión H2 -->
+            <!-- Conexión -->
             <property name="jakarta.persistence.jdbc.driver"
                       value="org.h2.Driver"/>
 
             <property name="jakarta.persistence.jdbc.url"
                       value="jdbc:h2:./database/veterinaria"/>
+
+            <property name="hibernate.archive.autodetection"
+                      value="class"/>
 
             <property name="jakarta.persistence.jdbc.user"
                       value="sa"/>
@@ -27,7 +53,8 @@
 
             <!-- Hibernate -->
             <property name="hibernate.hbm2ddl.auto"
-                      value="update"/>
+                      value="create"/>
+    <!--se tiene que cambiar el create a update cuando el proyecto esté terminado-->
 
             <property name="hibernate.show_sql"
                       value="true"/>
@@ -37,6 +64,9 @@
 
             <property name="hibernate.highlight_sql"
                       value="true"/>
+
+            <property name="hibernate.dialect"
+                      value="org.hibernate.dialect.H2Dialect"/>
 
         </properties>
 
