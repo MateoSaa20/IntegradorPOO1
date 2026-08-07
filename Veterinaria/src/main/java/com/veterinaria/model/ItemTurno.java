@@ -68,6 +68,10 @@ public class ItemTurno {
     public void setServicio(Servicio servicio) {
         this.servicio = servicio;
     }
+    
+    public void setTiempoAlMomento(int tiempoAlMomento) {
+        this.tiempoAlMomento = tiempoAlMomento;
+    }
 
     //Metodos de DetalleAtencion
     public DetalleAtencion getDetalleAtencion() {

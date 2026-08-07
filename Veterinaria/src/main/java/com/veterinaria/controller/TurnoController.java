@@ -1,11 +1,11 @@
 package com.veterinaria.controller;
 
-import com.veterinaria.model.EstadoTurno;
 import com.veterinaria.model.Turno;
 import com.veterinaria.repository.TurnoRepository;
 import jakarta.persistence.EntityManager;
 
-import java.time.Duration;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,51 +19,34 @@ public class TurnoController {
         this.turnoRepository = new TurnoRepository(em);
     }
 
-    public void agendarTurno(Turno turno) {
-        if (turno.getFechaHora() == null || turno.getFechaHora().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("La fecha del turno debe ser futura.");
-        }
-        if (turno.getMascota() == null) {
-            throw new IllegalArgumentException("El turno debe tener una mascota asignada.");
-        }
-        if (turno.getVeterinario() == null) {
-            throw new IllegalArgumentException("El turno debe tener un veterinario asignado.");
-        }
+/**
+     * Método principal para guardar un nuevo turno.
+     */
+    public void agendarTurno(Turno nuevoTurno) throws Exception {
+        // 1. Extraemos los datos necesarios para la validación
+        LocalDate fechaTurno = nuevoTurno.getFechaHora().toLocalDate();
+        Long idVeterinario = nuevoTurno.getVeterinario().getIdVeterinario();
 
-        try {
-            em.getTransaction().begin();
-            turno.setEstado(EstadoTurno.PENDIENTE);
-            turnoRepository.guardar(turno);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) em.getTransaction().rollback();
-            throw e;
-        }
+        // 2. Buscamos los turnos previos de ese veterinario para ese mismo día
+        List<Turno> turnosDelDia = turnoRepository.findByVeterinarioAndFecha(idVeterinario, fechaTurno);
+
+        // 3. Ejecutamos la regla de negocio (arrojará Exception si hay solapamiento)
+        nuevoTurno.validarDisponibilidad(turnosDelDia);
+
+        // 4. Si la validación es exitosa, guardamos en la base de datos
+        // IMPORTANTE: Cambia "guardar" por el método que tengas definido en tu BaseRepository (ej. crear, persist, etc.)
+        turnoRepository.guardar(nuevoTurno);
     }
 
-    public void cancelarTurno(long idTurno) {
-        try {
-            em.getTransaction().begin();
 
-            Turno turno = turnoRepository.buscarPorId(idTurno)
-                    .orElseThrow(() -> new IllegalArgumentException("Turno no encontrado con ID: " + idTurno));
-
-            // Regla de Negocio: Cancelar únicamente con más de 24 horas de anticipación
-            LocalDateTime ahora = LocalDateTime.now();
-            long horasDiferencia = Duration.between(ahora, turno.getFechaHora()).toHours();
-
-            if (horasDiferencia < 24) {
-                throw new IllegalStateException("No se puede cancelar un turno con menos de 24 horas de anticipación.");
-            }
-
-            turno.setEstado(EstadoTurno.CANCELADO);
-            turnoRepository.actualizar(turno);
-
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) em.getTransaction().rollback();
-            throw e;
-        }
+    public void cancelarTurno(Long idTurno) throws Exception {
+        Turno turno = turnoRepository.buscarPorId(idTurno)
+        .orElseThrow(() -> new Exception("No se encontró el turno con ID: " + idTurno)); // O como lo busques en tu BaseRepository
+        
+        // Le pasamos el momento exacto en el que el usuario hizo click en "Cancelar"
+        turno.cancelar(LocalDateTime.now());
+        
+        turnoRepository.guardar(turno); // O actualizar/merge
     }
 
     public List<Turno> listarTurnos() {

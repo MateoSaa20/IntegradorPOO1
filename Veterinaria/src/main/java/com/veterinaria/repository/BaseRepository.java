@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
+
 public class BaseRepository<T, ID> {
 
     protected final EntityManager em;
@@ -24,7 +25,9 @@ public class BaseRepository<T, ID> {
     }
 
     public Optional<T> buscarPorId(ID id) {
-        return Optional.ofNullable(em.find(entityClass, id));
+        T entity = em.find(entityClass, id);
+        // ofNullable envuelve la entidad si existe, o devuelve un Optional vacío si es null
+        return Optional.ofNullable(entity);
     }
 
     public List<T> buscarTodos() {
