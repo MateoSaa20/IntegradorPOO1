@@ -66,7 +66,7 @@ public class Main {
             
             atencionController.registrarDetalleAtencion(turno.getIdTurno(), itemTurno.getIdItemTurno(), detalle);
             System.out.println("✔ Atención registrada exitosamente. Nuevo estado del turno: " + turno.getEstado());
-System.out.println("\n==========================================");
+            System.out.println("\n==========================================");
             System.out.println("  VERIFICACIÓN DE DATOS EN LA BASE DE DATOS");
             System.out.println("==========================================");
 
