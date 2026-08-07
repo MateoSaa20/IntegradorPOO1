@@ -5,7 +5,6 @@ import com.veterinaria.controller.*;
 import com.veterinaria.model.*;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
-
 import java.time.LocalDateTime;
 
 public class Main {
@@ -94,7 +93,8 @@ public class Main {
             System.out.println("  ¡TODAS LAS PRUEBAS PASARON CORRECTAMENTE!");
             System.out.println("==========================================\n");
             
-
+            // Abre el servidor web de H2
+    
 
         } catch (Exception e) {
             System.err.println("❌ ERROR DURANTE LA PRUEBA:");

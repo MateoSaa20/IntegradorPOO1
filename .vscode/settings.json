@@ -5,10 +5,10 @@
             "previewLimit": 50,
             "server": "localhost",
             "port": 5432,
-            "driver": "PostgreSQL",
-            "name": "PostgresSQL",
+            "driver": "SQLite",
+            "name": "Veterinaria",
             "group": "BaseDatos",
-            "database": "bancos",
+            "database": "veterinaria",
             "username": "postgres",
             "password": "Mateosaa123"
         }
