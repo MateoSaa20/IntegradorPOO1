@@ -92,7 +92,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>com.veterinaria.app.Main</mainClass>
+                    <mainClass>com.veterinaria.app.App</mainClass>
                 </configuration>
             </plugin>
 

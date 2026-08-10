@@ -38,6 +38,35 @@ public class ClienteController {
         }
     }
 
+    public void eliminar(Long id) {
+    em.getTransaction().begin();
+    try {
+        clienteRepository.buscarPorId(id).ifPresent(cliente -> {
+            clienteRepository.eliminar(cliente);
+        });
+        em.getTransaction().commit();
+    } catch (Exception e) {
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
+        throw new RuntimeException("Error al eliminar el cliente: " + e.getMessage(), e);
+    }
+    }
+
+    public Cliente actualizar(Cliente cliente) {
+    em.getTransaction().begin();
+    try {
+        Cliente clienteActualizado = clienteRepository.actualizar(cliente);
+        em.getTransaction().commit();
+        return clienteActualizado;
+    } catch (Exception e) {
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
+        throw new RuntimeException("Error al actualizar el cliente: " + e.getMessage(), e);
+    }
+}
+
     public void agregarMascotaACliente(long idCliente, Mascota mascota) {
         try {
             em.getTransaction().begin();

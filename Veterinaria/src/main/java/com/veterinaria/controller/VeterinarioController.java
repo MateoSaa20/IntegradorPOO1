@@ -4,6 +4,11 @@ import com.veterinaria.model.Especialidad;
 import com.veterinaria.model.Veterinario;
 import com.veterinaria.repository.VeterinarioRepository;
 import jakarta.persistence.EntityManager;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.layout.StackPane;
+import java.io.IOException;
 
 import java.util.List;
 import java.util.Optional;
@@ -65,4 +70,35 @@ public class VeterinarioController {
     public List<Veterinario> listarVeterinarios() {
         return veterinarioRepository.buscarTodos();
     }
+    
+    
+    public class MainViewController {
+
+    @FXML
+    private StackPane contentArea;
+
+    @FXML
+    public void mostrarClientes() {
+        cargarVista("/fxml/ClienteMascotaView.fxml");
+    }
+
+    @FXML
+    public void mostrarTurnos() {
+        cargarVista("/fxml/TurnosView.fxml");
+    }
+
+    @FXML
+    public void mostrarHistorial() {
+        cargarVista("/fxml/HistorialView.fxml");
+    }
+
+    private void cargarVista(String fxmlPath) {
+        try {
+            Parent vista = FXMLLoader.load(getClass().getResource(fxmlPath));
+            contentArea.getChildren().setAll(vista);
+        } catch (IOException e) {
+            System.err.println("Error al cargar la vista " + fxmlPath + ": " + e.getMessage());
+        }
+    }
+}
 }

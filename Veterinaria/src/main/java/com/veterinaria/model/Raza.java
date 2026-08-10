@@ -51,4 +51,9 @@ public class Raza {
     public void setEspecie(Especie especie) {
         this.especie = especie;
     }
+
+    @Override
+    public String toString() {
+        return nombre;
+    }
 }
