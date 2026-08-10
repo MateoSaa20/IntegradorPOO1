@@ -24,8 +24,12 @@ public class ClienteController {
         if (cliente.getNombre() == null || cliente.getNombre().isBlank()) {
             throw new IllegalArgumentException("El nombre del cliente no puede estar vacío.");
         }
-        if (cliente.getDni() == null || cliente.getDni().isBlank()) {
+        if (cliente.getDni() == 0 || cliente.getDni() <= 0 || String.valueOf(cliente.getDni()).length() != 8) {
             throw new IllegalArgumentException("El DNI es obligatorio.");
+        }
+
+        if (cliente.getTelefono() == 0 || cliente.getTelefono() <= 0 || String.valueOf(cliente.getTelefono()).length() < 8) {
+            throw new IllegalArgumentException("El teléfono es obligatorio y debe tener al menos 8 dígitos.");
         }
 
         try {

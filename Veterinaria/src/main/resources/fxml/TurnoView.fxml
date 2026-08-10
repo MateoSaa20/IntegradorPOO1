@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="15.0" xmlns="http://javafx.com/fxml/1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.veterinaria.controller.TurnoViewController"
+      style="-fx-padding: 15;">
+
+    <Label text="Gestión de Turnos Médicos" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <!-- TITLED PANE DE REGISTRO -->
+    <TitledPane text="Agendar Nuevo Turno" animated="false">
+        <VBox spacing="10.0">
+            <!-- Fila 1: Selección de Cliente, Mascota y Veterinario -->
+            <HBox spacing="15.0" alignment="CENTER_LEFT">
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Cliente:"/>
+                    <ComboBox fx:id="cmbCliente" prefWidth="180.0"/>
+                </HBox>
+
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Mascota:"/>
+                    <ComboBox fx:id="cmbMascota" prefWidth="160.0" disable="true"/>
+                </HBox>
+
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Veterinario:"/>
+                    <ComboBox fx:id="cmbVeterinario" prefWidth="200.0"/>
+                </HBox>
+            </HBox>
+
+            <!-- Fila 2: Fecha, Hora y Estado -->
+            <HBox spacing="15.0" alignment="CENTER_LEFT">
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Fecha:"/>
+                    <DatePicker fx:id="dpFecha" prefWidth="130.0"/>
+                </HBox>
+
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Hora (HH:mm):"/>
+                    <TextField fx:id="txtHora" prefWidth="90.0" promptText="09:30"/>
+                </HBox>
+
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Estado:"/>
+                    <ComboBox fx:id="cmbEstado" prefWidth="140.0"/>
+                </HBox>
+            </HBox>
+
+            <!-- Tabla de Turnos Agendados -->
+            <TableView fx:id="tablaTurnos" prefHeight="220.0">
+                <columns>
+                    <TableColumn fx:id="colId" text="ID Turno" prefWidth="70.0"/>
+                    <TableColumn fx:id="colFechaHora" text="Fecha y Hora" prefWidth="130.0"/>
+                    <TableColumn fx:id="colCliente" text="Cliente" prefWidth="150.0"/>
+                    <TableColumn fx:id="colMascota" text="Mascota" prefWidth="110.0"/>
+                    <TableColumn fx:id="colVeterinario" text="Veterinario" prefWidth="160.0"/>
+                    <TableColumn fx:id="colEstado" text="Estado" prefWidth="100.0"/>
+                    <TableColumn fx:id="colDuracion" text="Tiempo (min)" prefWidth="90.0"/>
+                    <TableColumn fx:id="colPrecioTotal" text="Precio Total" prefWidth="100.0"/>
+                </columns>
+            </TableView>
+
+            <!-- Fila Inferior: Botones alineados a la DERECHA -->
+            <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                <Button text="Agendar Turno" onAction="#agendarTurno"/>
+                <Button text="Confirmar" onAction="#confirmarTurno"/>
+                <Button text="Atender" onAction="#atenderTurno"/>
+                <Button text="Cancelar Turno" onAction="#cancelarTurno" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+            </HBox>
+        </VBox>
+    </TitledPane>
+
+</VBox>

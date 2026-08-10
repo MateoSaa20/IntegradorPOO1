@@ -35,4 +35,9 @@ public class Especie {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
+
+    @Override
+    public String toString() {
+        return nombre != null ? nombre : "Especie sin nombre";
+    }
 }

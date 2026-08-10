@@ -12,48 +12,96 @@
     <!-- SECCIÓN 1: CLIENTES -->
     <TitledPane text="Clientes" animated="false">
         <VBox spacing="10.0">
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <TextField fx:id="txtNombre" promptText="Nombre"/>
-                <TextField fx:id="txtApellido" promptText="Apellido"/>
-                <TextField fx:id="txtDni" promptText="DNI"/>
-                <TextField fx:id="txtTelefono" promptText="Teléfono"/>
-                <Button text="Guardar" onAction="#guardarCliente"/>
-                <Button text="Editar" onAction="#editarCliente"/>
-                <Button text="Eliminar" onAction="#eliminarCliente" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+            <!-- Fila superior: Carga de Datos del Cliente -->
+            <HBox spacing="15.0" alignment="CENTER_LEFT">
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Nombre:"/>
+                    <TextField fx:id="txtNombre" prefWidth="140.0"/>
+                </HBox>
+
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Apellido:"/>
+                    <TextField fx:id="txtApellido" prefWidth="140.0"/>
+                </HBox>
+
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="DNI:"/>
+                    <TextField fx:id="txtDni" prefWidth="120.0"/>
+                </HBox>
+
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Teléfono:"/>
+                    <TextField fx:id="txtTelefono" prefWidth="130.0"/>
+                </HBox>
             </HBox>
 
+            <!-- Tabla de Clientes -->
             <TableView fx:id="tablaClientes" prefHeight="180.0">
                 <columns>
-                    <TableColumn fx:id="colDni" text="DNI" prefWidth="100.0"/>
-                    <TableColumn fx:id="colNombre" text="Nombre" prefWidth="150.0"/>
-                    <TableColumn fx:id="colApellido" text="Apellido" prefWidth="150.0"/>
-                    <TableColumn fx:id="colTelefono" text="Teléfono" prefWidth="120.0"/>
+                    <TableColumn fx:id="colDni" text="DNI" prefWidth="120.0"/>
+                    <TableColumn fx:id="colNombre" text="Nombre" prefWidth="180.0"/>
+                    <TableColumn fx:id="colApellido" text="Apellido" prefWidth="180.0"/>
+                    <TableColumn fx:id="colTelefono" text="Teléfono" prefWidth="150.0"/>
                 </columns>
             </TableView>
+
+            <!-- Fila inferior: Botones del Cliente alineados a la DERECHA -->
+            <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                <Button text="Guardar Cliente" onAction="#guardarCliente"/>
+                <Button text="Editar Cliente" onAction="#editarCliente"/>
+                <Button text="Eliminar Cliente" onAction="#eliminarCliente" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+            </HBox>
         </VBox>
     </TitledPane>
 
     <!-- SECCIÓN 2: MASCOTAS DEL CLIENTE SELECCIONADO -->
     <TitledPane text="Mascotas del Cliente Seleccionado" animated="false">
         <VBox spacing="10.0">
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <TextField fx:id="txtMascotaNombre" promptText="Nombre Mascota"/>
-                <ComboBox fx:id="cmbSexo" promptText="Sexo"/>
-                <ComboBox fx:id="cmbRaza" promptText="Seleccionar Raza"/>
-                <DatePicker fx:id="dpFechaNacimiento" promptText="Fecha Nacimiento"/>
-                <Button text="Agregar Mascota" onAction="#guardarMascota"/>
-                <Button text="Eliminar Mascota" onAction="#eliminarMascota" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+            <!-- Fila superior: Carga de Datos de la Mascota -->
+            <HBox spacing="15.0" alignment="CENTER_LEFT">
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Nombre:"/>
+                    <TextField fx:id="txtMascotaNombre" prefWidth="130.0"/>
+                </HBox>
+
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Sexo:"/>
+                    <ComboBox fx:id="cmbSexo" prefWidth="100.0"/>
+                </HBox>
+
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Especie:"/>
+                    <ComboBox fx:id="cmbEspecie" prefWidth="120.0"/>
+                </HBox>
+
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Raza:"/>
+                    <ComboBox fx:id="cmbRaza" prefWidth="130.0" disable="true"/>
+                </HBox>
+
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Fecha Nac.:"/>
+                    <DatePicker fx:id="dpFechaNacimiento" prefWidth="130.0"/>
+                </HBox>
             </HBox>
 
+            <!-- Tabla de Mascotas -->
             <TableView fx:id="tablaMascotas" prefHeight="180.0">
                 <columns>
-                    <TableColumn fx:id="colFicha" text="Nº Ficha" prefWidth="80.0"/>
-                    <TableColumn fx:id="colMascotaNombre" text="Nombre" prefWidth="130.0"/>
-                    <TableColumn fx:id="colRaza" text="Raza" prefWidth="120.0"/>
-                    <TableColumn fx:id="colSexo" text="Sexo" prefWidth="90.0"/>
-                    <TableColumn fx:id="colFechaNac" text="Fecha Nacimiento" prefWidth="120.0"/>
+                    <TableColumn fx:id="colFicha" text="Nº Ficha" prefWidth="90.0"/>
+                    <TableColumn fx:id="colMascotaNombre" text="Nombre" prefWidth="150.0"/>
+                    <TableColumn fx:id="colRaza" text="Raza" prefWidth="140.0"/>
+                    <TableColumn fx:id="colSexo" text="Sexo" prefWidth="100.0"/>
+                    <TableColumn fx:id="colFechaNac" text="Fecha Nacimiento" prefWidth="140.0"/>
                 </columns>
             </TableView>
+
+            <!-- Fila inferior: Botones de Mascota alineados a la DERECHA -->
+            <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                <Button text="Agregar Mascota" onAction="#guardarMascota"/>
+                <Button text="Editar Mascota" onAction="#editarMascota"/>
+                <Button text="Eliminar Mascota" onAction="#eliminarMascota" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+            </HBox>
         </VBox>
     </TitledPane>
 

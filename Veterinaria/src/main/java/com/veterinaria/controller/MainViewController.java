@@ -21,7 +21,7 @@ public class MainViewController {
 
     @FXML
     public void mostrarTurnos() {
-        cargarVista("/fxml/TurnosView.fxml");
+        cargarVista("/fxml/TurnoView.fxml");
     }
 
     @FXML
@@ -35,6 +35,7 @@ public class MainViewController {
             contentArea.getChildren().setAll(vista);
         } catch (IOException e) {
             System.err.println("Error al cargar la vista " + fxmlPath + ": " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

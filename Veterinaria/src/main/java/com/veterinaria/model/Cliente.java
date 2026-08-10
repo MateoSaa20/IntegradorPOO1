@@ -28,10 +28,10 @@ public class Cliente {
     private String apellido;
 
     @Column(nullable = false, unique = true, length = 15)
-    private String dni;
+    private int dni;
 
     @Column(nullable = false, length = 20)
-    private String telefono;
+    private int telefono;
 
     @OneToMany(
             mappedBy = "cliente",
@@ -45,8 +45,8 @@ public class Cliente {
 
     public Cliente(String nombre,
                    String apellido,
-                   String dni,
-                   String telefono) {
+                   int dni,
+                   int telefono) {
 
         this.nombre = nombre;
         this.apellido = apellido;
@@ -78,16 +78,20 @@ public class Cliente {
         return apellido;
     }
 
-    public String getDni() {
+    public int getDni() {
         return dni;
     }
 
-    public String getTelefono() {
+    public int getTelefono() {
         return telefono;
     }
 
     public List<Mascota> getMascotas() {
         return mascotas;
+    }
+    @Override
+    public String toString() {
+        return nombre + " " + apellido;
     }
 
     // ===== SETTERS =====
@@ -100,11 +104,11 @@ public class Cliente {
         this.apellido = apellido;
     }
 
-    public void setDni(String dni) {
+    public void setDni(int dni) {
         this.dni = dni;
     }
 
-    public void setTelefono(String telefono) {
+    public void setTelefono(int telefono) {
         this.telefono = telefono;
     }
 }

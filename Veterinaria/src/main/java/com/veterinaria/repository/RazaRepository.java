@@ -1,5 +1,6 @@
 package com.veterinaria.repository;
 
+import com.veterinaria.model.Especie;
 import com.veterinaria.model.Raza;
 import jakarta.persistence.EntityManager;
 import java.util.List;
@@ -10,10 +11,10 @@ public class RazaRepository extends BaseRepository<Raza, Long> {
         super(em, Raza.class);
     }
 
-    public List<Raza> buscarPorEspecie(Long idEspecie) {
-        String jpql = "SELECT r FROM Raza r WHERE r.especie.idEspecie = :idEspecie";
-        return em.createQuery(jpql, Raza.class)
-                 .setParameter("idEspecie", idEspecie)
+    // 💡 Consulta JPQL filtrando por la relación de objeto
+    public List<Raza> buscarPorEspecie(Especie especie) {
+        return em.createQuery("SELECT r FROM Raza r WHERE r.especie = :especie", Raza.class)
+                 .setParameter("especie", especie)
                  .getResultList();
     }
 }

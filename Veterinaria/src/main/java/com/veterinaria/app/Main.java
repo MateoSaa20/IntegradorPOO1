@@ -37,7 +37,7 @@ public class Main {
             em.getTransaction().commit();
 
             // 3. Registrar Cliente y Mascota
-            Cliente cliente = new Cliente("Juan", "Pérez", "123456", "3764000000");
+            Cliente cliente = new Cliente("Juan", "Pérez", 123456, 37640000);
             Mascota mascota = new Mascota("Panchito", LocalDate.of(2023, 2, 11), Sexo.MACHO, labradormix);
             cliente.agregarMascota(mascota);
             
