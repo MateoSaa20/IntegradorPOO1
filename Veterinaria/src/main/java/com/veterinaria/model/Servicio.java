@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "servicios")
-@Inheritance(strategy = InheritanceType.JOINED)
-
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo_servicio", discriminatorType = DiscriminatorType.STRING)
 public abstract class Servicio {
 
     @Id
@@ -13,54 +13,35 @@ public abstract class Servicio {
     @Column(name = "id_servicio")
     private Long idServicio;
 
-    @Column(nullable = false, length = 80)
+    @Column(nullable = false)
     private String nombre;
 
     @Column(nullable = false)
-    private double precioBase;
+    private Double precio;
 
-    @Column(nullable = false)
-    private int duracionMinutos;
+    @Column(name = "duracion_minutos", nullable = false)
+    private Integer duracionMinutos;
 
-    public Servicio() {
-    }
+    public Servicio() {}
 
-    public Servicio(String nombre,
-                    double precioBase,
-                    int duracionMinutos) {
-
+    public Servicio(String nombre, Double precioBase, Integer duracionMinutos) {
         this.nombre = nombre;
-        this.precioBase = precioBase;
+        this.precio = precioBase;
         this.duracionMinutos = duracionMinutos;
     }
 
-    public Long getIdServicio() {
-        return idServicio;
-    }
+    // Getters y Setters
+    public Long getIdServicio() { return idServicio; }
+    public void setIdServicio(Long idServicio) { this.idServicio = idServicio; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public double getPrecioBase() {
-        return precioBase;
-    }
+    public Double getPrecio() { return precio; }
+    public void setPrecio(Double precio) { this.precio = precio; }
 
-    public int getDuracionMinutos() {
-        return duracionMinutos;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public void setPrecioBase(double precioBase) {
-        this.precioBase = precioBase;
-    }
-
-    public void setDuracionMinutos(int duracionMinutos) {
-        this.duracionMinutos = duracionMinutos;
-    }
+    public Integer getDuracionMinutos() { return duracionMinutos; }
+    public void setDuracionMinutos(Integer duracionMinutos) { this.duracionMinutos = duracionMinutos; }
 
     @Override
     public String toString() {

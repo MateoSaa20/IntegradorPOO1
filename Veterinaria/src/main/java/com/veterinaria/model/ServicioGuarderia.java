@@ -7,7 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "servicios_guarderia")
+
 public class ServicioGuarderia extends Servicio {
 
     @Column(nullable = false)

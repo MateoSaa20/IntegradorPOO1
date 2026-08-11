@@ -22,11 +22,11 @@ public class Turno {
     @Column(nullable = false)
     private EstadoTurno estado;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_veterinario", nullable = false)
     private Veterinario veterinario;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "numero_ficha", nullable = false)
     private Mascota mascota;
 
@@ -63,13 +63,13 @@ public class Turno {
 
     public int calcularTiempoTotal() {
         return items.stream()
-                .mapToInt(ItemTurno::getTiempoAlMomento)
+                .mapToInt(ItemTurno::getDuracionCobrada)
                 .sum();
     }
 
     public double calcularPrecioTotal() {
         return items.stream()
-                .mapToDouble(ItemTurno::getPrecioAlMomento)
+                .mapToDouble(ItemTurno::getPrecioCobrado)
                 .sum();
     }
     //Metodos de restricción de turnos
@@ -85,7 +85,7 @@ public class Turno {
                 // Excluimos la guardería porque el veterinario no se queda con el animal
                 if (!(item.getServicio() instanceof ServicioGuarderia)) {
                     // Usamos el tiempo guardado en el detalle del turno
-                    minutosOcupado += item.getTiempoAlMomento(); 
+                    minutosOcupado += item.getDuracionCobrada(); 
                 }
             }
         }

@@ -3,7 +3,7 @@ package com.veterinaria.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "servicios_vacunacion")
+
 public class ServicioVacunacion extends Servicio {
 
     @ManyToOne

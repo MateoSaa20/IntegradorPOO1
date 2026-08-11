@@ -28,7 +28,7 @@ public class AtencionController {
                     .orElseThrow(() -> new IllegalArgumentException("Turno no encontrado."));
 
             ItemTurno item = turno.getItems().stream()
-                    .filter(i -> i.getIdItemTurno() == idItemTurno)
+                    .filter(i -> i.getIdItem() == idItemTurno)
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Item no encontrado en el turno."));
 

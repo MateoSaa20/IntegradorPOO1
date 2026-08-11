@@ -4,7 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "servicios_peluqueria")
+
 public class ServicioPeluqueria extends Servicio {
 
     public ServicioPeluqueria() {
