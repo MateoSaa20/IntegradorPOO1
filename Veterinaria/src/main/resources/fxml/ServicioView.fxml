@@ -37,6 +37,11 @@
                     <Label text="Vacuna:"/>
                     <ComboBox fx:id="cmbTipoVacuna" prefWidth="150.0"/>
                 </HBox>
+
+                <HBox fx:id="boxCapacidad" spacing="5.0" alignment="CENTER_LEFT" visible="false" managed="false">
+                    <Label text="Capacidad máx. animales:"/>
+                    <TextField fx:id="txtCapacidad" prefWidth="110.0"/>
+                </HBox>
             </HBox>
 
             <!-- Tabla de Servicios -->
@@ -47,6 +52,7 @@
                     <TableColumn fx:id="colPrecio" text="Precio" prefWidth="100.0"/>
                     <TableColumn fx:id="colDuracion" text="Duración" prefWidth="100.0"/>
                     <TableColumn fx:id="colVacuna" text="Vacuna" prefWidth="160.0"/>
+                    <TableColumn fx:id="colCapacidad" text="Capacidad" prefWidth="100.0"/>
                 </columns>
             </TableView>
 

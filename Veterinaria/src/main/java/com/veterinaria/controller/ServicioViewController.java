@@ -26,12 +26,16 @@ public class ServicioViewController {
     @FXML private HBox boxTipoVacuna;
     @FXML private ComboBox<TipoVacuna> cmbTipoVacuna;
 
+    @FXML private HBox boxCapacidad;
+    @FXML private TextField txtCapacidad;
+
     @FXML private TableView<Servicio> tablaServicios;
     @FXML private TableColumn<Servicio, String> colNombre;
     @FXML private TableColumn<Servicio, String> colTipo;
     @FXML private TableColumn<Servicio, String> colPrecio;
     @FXML private TableColumn<Servicio, String> colDuracion;
     @FXML private TableColumn<Servicio, String> colVacuna;
+    @FXML private TableColumn<Servicio, String> colCapacidad;
 
     private ServicioController servicioController;
     private Servicio servicioEnEdicion = null;
@@ -72,6 +76,13 @@ public class ServicioViewController {
             if (!esVacunacion) {
                 cmbTipoVacuna.setValue(null);
             }
+
+            boolean esGuarderia = tipo == TipoServicio.GUARDERIA;
+            boxCapacidad.setVisible(esGuarderia);
+            boxCapacidad.setManaged(esGuarderia);
+            if (esGuarderia && (txtCapacidad.getText() == null || txtCapacidad.getText().isBlank())) {
+                txtCapacidad.setText(String.valueOf(ServicioGuarderia.CAPACIDAD_DEFECTO));
+            }
         });
     }
 
@@ -94,6 +105,11 @@ public class ServicioViewController {
         txtDuracion.textProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal.matches("\\d*")) {
                 txtDuracion.setText(newVal.replaceAll("[^\\d]", ""));
+            }
+        });
+        txtCapacidad.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.matches("\\d*")) {
+                txtCapacidad.setText(newVal.replaceAll("[^\\d]", ""));
             }
         });
     }
@@ -123,6 +139,16 @@ public class ServicioViewController {
             }
             return new SimpleStringProperty("");
         });
+
+        colCapacidad.setCellValueFactory(cellData -> {
+            Servicio servicio = cellData.getValue();
+            if (servicio instanceof ServicioGuarderia guarderia) {
+                return new SimpleStringProperty(
+                        guarderia.getCapacidadMaxima() + " animales"
+                );
+            }
+            return new SimpleStringProperty("");
+        });
     }
 
     private String nombreTipo(Servicio servicio) {
@@ -148,6 +174,12 @@ public class ServicioViewController {
         } else {
             cmbTipoVacuna.setValue(null);
         }
+
+        if (servicio instanceof ServicioGuarderia guarderia) {
+            txtCapacidad.setText(String.valueOf(guarderia.getCapacidadMaxima()));
+        } else {
+            txtCapacidad.clear();
+        }
     }
 
     @FXML
@@ -162,7 +194,10 @@ public class ServicioViewController {
                     txtNombre.getText().trim(),
                     Double.parseDouble(txtPrecio.getText().trim().replace(',', '.')),
                     Integer.parseInt(txtDuracion.getText().trim()),
-                    tipo == TipoServicio.VACUNACION ? cmbTipoVacuna.getValue() : null
+                    tipo == TipoServicio.VACUNACION ? cmbTipoVacuna.getValue() : null,
+                    tipo == TipoServicio.GUARDERIA
+                            ? Integer.parseInt(txtCapacidad.getText().trim())
+                            : null
             );
 
             servicioController.registrarServicio(nuevo);
@@ -195,6 +230,12 @@ public class ServicioViewController {
 
             if (servicioEnEdicion instanceof ServicioVacunacion vacunacion) {
                 vacunacion.setTipoVacuna(cmbTipoVacuna.getValue());
+            }
+
+            if (servicioEnEdicion instanceof ServicioGuarderia guarderia) {
+                guarderia.setCapacidadMaxima(
+                        Integer.parseInt(txtCapacidad.getText().trim())
+                );
             }
 
             servicioController.actualizar(servicioEnEdicion);
@@ -268,6 +309,20 @@ public class ServicioViewController {
             return false;
         }
 
+        if (cmbTipo.getValue() == TipoServicio.GUARDERIA) {
+            int capacidad;
+            try {
+                capacidad = Integer.parseInt(txtCapacidad.getText().trim());
+            } catch (NumberFormatException e) {
+                mostrarAlerta("Atención", "La capacidad de la guardería debe ser un número entero válido.");
+                return false;
+            }
+            if (capacidad < 1) {
+                mostrarAlerta("Atención", "La capacidad máxima de la guardería debe ser al menos 1.");
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -277,6 +332,7 @@ public class ServicioViewController {
         txtNombre.clear();
         txtPrecio.clear();
         txtDuracion.clear();
+        txtCapacidad.clear();
         cmbTipoVacuna.setValue(null);
         this.servicioEnEdicion = null;
         tablaServicios.getSelectionModel().clearSelection();
@@ -315,10 +371,10 @@ public class ServicioViewController {
             return etiqueta;
         }
 
-        public Servicio crear(String nombre, double precio, int duracion, TipoVacuna vacuna) {
+        public Servicio crear(String nombre, double precio, int duracion, TipoVacuna vacuna, Integer capacidad) {
             return switch (this) {
                 case VACUNACION -> new ServicioVacunacion(nombre, precio, duracion, vacuna);
-                case GUARDERIA -> new ServicioGuarderia(nombre, precio, duracion);
+                case GUARDERIA -> new ServicioGuarderia(nombre, precio, duracion, capacidad);
                 case PELUQUERIA -> new ServicioPeluqueria(nombre, precio, duracion);
                 default -> new ServicioConsulta(nombre, precio, duracion);
             };

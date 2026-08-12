@@ -15,6 +15,47 @@ public class ReglasNegocioTest {
     }
 
     // ==========================================================
+    // GUARDERÍA: CUPO MÁXIMO DE ANIMALES EN SIMULTÁNEO
+    // ==========================================================
+
+    @Test
+    public void guarderiaPorDefectoTieneCupoMaximoDe10() {
+        assertEquals(
+                ServicioGuarderia.CAPACIDAD_DEFECTO,
+                guarderia(1000, 1440).getCapacidadMaxima()
+        );
+    }
+
+    @Test
+    public void guarderiaPermiteConfigurarCupoMaximo() {
+        ServicioGuarderia servicio =
+                new ServicioGuarderia("Guardería", 1000, 1440, 3);
+
+        assertEquals(3, servicio.getCapacidadMaxima());
+    }
+
+    @Test
+    public void guarderiaConCupoCeroLanzaExcepcionAlValidar() {
+        ServicioGuarderia servicio =
+                new ServicioGuarderia("Guardería", 1000, 1440, 0);
+
+        Exception exception = assertThrows(
+                IllegalArgumentException.class,
+                servicio::validar
+        );
+
+        assertTrue(exception.getMessage().contains("capacidad"));
+    }
+
+    @Test
+    public void guarderiaConCupoValidoNoLanzaExcepcion() throws Exception {
+        ServicioGuarderia servicio =
+                new ServicioGuarderia("Guardería", 1000, 1440, 5);
+
+        servicio.validar();
+    }
+
+    // ==========================================================
     // GUARDERÍA: PRECIO POR CANTIDAD DE DÍAS
     // ==========================================================
 

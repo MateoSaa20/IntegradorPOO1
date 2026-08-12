@@ -2,6 +2,7 @@ package com.veterinaria.app;
 
 import com.veterinaria.config.DataInitializer;
 import com.veterinaria.config.JpaUtil;
+import jakarta.persistence.EntityManager;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -14,8 +15,6 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         
-        DataInitializer.cargarDatosIniciales(JpaUtil.getEntityManager());
-        
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainView.fxml"));
         Parent root = loader.load();
 
@@ -27,7 +26,9 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-        DataInitializer.cargarServiciosIniciales();
+        try (EntityManager em = JpaUtil.getEntityManager()) {
+            DataInitializer.cargarDatosIniciales(em);
+        }
         launch(args);
     }
 }

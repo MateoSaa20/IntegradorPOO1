@@ -82,18 +82,36 @@ public class TurnoController {
         // 2. Construir los items aplicando las reglas de cada servicio.
         for (Servicio servicio : servicios) {
 
-            if (servicio instanceof ServicioGuarderia) {
+            if (servicio instanceof ServicioGuarderia guarderia) {
 
                 // Regla: la guardería se cobra por cantidad de días y no
                 // puede iniciar en un día/hora anterior a la actual.
                 ItemGuarderia itemGuarderia = new ItemGuarderia(
-                        (ServicioGuarderia) servicio,
+                        guarderia,
                         turno,
                         ingresoGuarderia,
                         salidaGuarderia
                 );
 
                 itemGuarderia.validarRango(LocalDateTime.now());
+
+                // Regla: la guardería tiene un cupo máximo de animales en
+                // simultáneo. Si el período elegido ya está completo, no se
+                // puede agendar. El item actual aún no se persistió, por lo
+                // que no se cuenta a sí mismo.
+                long ocupadas = turnoRepository.contarGuarderiasOcupadas(
+                        ingresoGuarderia,
+                        salidaGuarderia
+                );
+
+                if (ocupadas >= guarderia.getCapacidadMaxima()) {
+                    throw new Exception(
+                            "La guardería está completa en ese período (cupo máximo: "
+                                    + guarderia.getCapacidadMaxima()
+                                    + " animales en simultáneo)."
+                    );
+                }
+
                 turno.agregarItem(itemGuarderia);
 
             } else {

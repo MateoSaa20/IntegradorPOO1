@@ -10,6 +10,10 @@ import java.time.temporal.ChronoUnit;
 
 public class ServicioGuarderia extends Servicio {
 
+    public static final int CAPACIDAD_DEFECTO = 10;
+
+    @jakarta.persistence.Column(name = "capacidad_maxima", nullable = false)
+    private int capacidadMaxima = CAPACIDAD_DEFECTO;
 
     public ServicioGuarderia() {
     }
@@ -18,8 +22,29 @@ public class ServicioGuarderia extends Servicio {
                              double precioBase,
                              int duracionMinutos) {
 
-        super(nombre, precioBase, duracionMinutos);                                      
+        this(nombre, precioBase, duracionMinutos, CAPACIDAD_DEFECTO);
     }
+
+    public ServicioGuarderia(String nombre,
+                             double precioBase,
+                             int duracionMinutos,
+                             int capacidadMaxima) {
+
+        super(nombre, precioBase, duracionMinutos);
+        this.capacidadMaxima = capacidadMaxima;
+    }
+
+    @Override
+    public void validar() {
+        super.validar();
+        if (capacidadMaxima < 1) {
+            throw new IllegalArgumentException(
+                    "La capacidad máxima de la guardería debe ser al menos 1.");
+        }
+    }
+
+    public int getCapacidadMaxima() { return capacidadMaxima; }
+    public void setCapacidadMaxima(int capacidadMaxima) { this.capacidadMaxima = capacidadMaxima; }
 
     /**
      * Regla de negocio (exclusiva de la guardería): el precio se calcula

@@ -42,6 +42,24 @@ public class TurnoRepository extends BaseRepository<Turno, Long> {
     }
 
     /**
+     * Cuenta cuántas mascotas están en la guardería en algún punto del
+     * período [inicio, fin]. Solo considera turnos no CANCELADOS y cuenta
+     * las estadías cuyo rango se solapa con el período consultado.
+     */
+    public long contarGuarderiasOcupadas(LocalDateTime inicio, LocalDateTime fin) {
+        return em.createQuery(
+                "SELECT COUNT(i) FROM ItemGuarderia i " +
+                "WHERE i.turno.estado <> :cancelado " +
+                "AND i.fechaHoraInicio < :fin " +
+                "AND i.fechaHoraFin > :inicio",
+                Long.class)
+                .setParameter("cancelado", EstadoTurno.CANCELADO)
+                .setParameter("inicio", inicio)
+                .setParameter("fin", fin)
+                .getSingleResult();
+    }
+
+    /**
      * Busca todos los turnos de una mascota (con cualquier veterinario)
      * en una fecha específica.
      */
