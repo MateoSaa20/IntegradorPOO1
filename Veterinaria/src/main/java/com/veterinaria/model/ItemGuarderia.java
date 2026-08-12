@@ -37,8 +37,8 @@ public class ItemGuarderia extends ItemTurno {
             long dias = (long) Math.ceil((double) minutosTotales / (24 * 60));
             if (dias < 1) dias = 1; // Cobro mínimo de 1 día
 
-            setDuracionCobrada((int) minutosTotales);
-            setPrecioCobrado(servicio.getPrecio() * dias);
+            setTiempoAlMomento((int) minutosTotales);
+            setPrecioAlMomento(servicio.getPrecio() * dias);
         }
     }
 

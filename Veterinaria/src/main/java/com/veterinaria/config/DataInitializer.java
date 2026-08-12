@@ -3,6 +3,11 @@ package com.veterinaria.config;
 import com.veterinaria.model.Especialidad;
 import com.veterinaria.model.Especie;
 import com.veterinaria.model.Raza;
+import com.veterinaria.model.ServicioConsulta;
+import com.veterinaria.model.ServicioGuarderia;
+import com.veterinaria.model.ServicioPeluqueria;
+import com.veterinaria.model.ServicioVacunacion;
+import com.veterinaria.model.TipoVacuna;
 import com.veterinaria.model.Veterinario;
 import com.veterinaria.repository.EspecieRepository;
 import com.veterinaria.repository.RazaRepository;
@@ -75,5 +80,56 @@ try {
     System.err.println("❌ Error al cargar veterinarios: " + e.getMessage());
     e.printStackTrace();
 }
+    }
+    public static void cargarServiciosIniciales() {
+        EntityManager em = JpaUtil.getEntityManager();
+
+        try {
+            // Verificar si ya existen servicios registrados
+            Long cantidadServicios = em.createQuery("SELECT COUNT(s) FROM Servicio s", Long.class)
+                                       .getSingleResult();
+
+            if (cantidadServicios == 0) {
+                em.getTransaction().begin();
+// 1. Instanciar y persistir los Tipos de Vacuna en la BD
+                // (Al hacer persist, la BD le genera el ID autoincremental)
+                TipoVacuna antirrabicaTv = new TipoVacuna("Rabisin", "Rabia", 12);
+                TipoVacuna quintupleTv = new TipoVacuna("Nobivac DHPPi", "Moquillo, Parvovirus, Hepatitis, Leptospirosis", 12);
+
+                em.persist(antirrabicaTv);
+                em.persist(quintupleTv);
+
+                // Forzamos la sincronización para que Hibernate obtenga los IDs generados
+                em.flush();
+
+                // 2. Instanciar los Servicios pasando el objeto TipoVacuna ya persistido
+                ServicioConsulta consulta = new ServicioConsulta("Consulta Clínica General", 6500.0, 30);
+                ServicioVacunacion antirrabica = new ServicioVacunacion("Vacuna Antirrábica", 9000.0, 15, antirrabicaTv);
+                ServicioVacunacion quintuple = new ServicioVacunacion("Vacuna Quíntuple", 11500.0, 15, quintupleTv);
+                ServicioPeluqueria peluqueria = new ServicioPeluqueria("Peluquería y Baño Completo", 14000.0, 60);
+                ServicioGuarderia guarderia = new ServicioGuarderia("Guardería Canina/Felina (por Día)", 18000.0, 1440);
+
+                // 3. Persistir los servicios
+                em.persist(consulta);
+                em.persist(antirrabica);
+                em.persist(quintuple);
+                em.persist(peluqueria);
+                em.persist(guarderia);
+
+                em.getTransaction().commit();
+                System.out.println("✅ SERVICIOS INICIALES CARGADOS EXITOSAMENTE EN LA BD.");
+            } else {
+                System.out.println("ℹ️ Los servicios ya se encontraban cargados en la BD.");
+            }
+
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            System.err.println("❌ ERROR AL CARGAR SERVICIOS INICIALES: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
     }
 }

@@ -63,13 +63,13 @@ public class Turno {
 
     public int calcularTiempoTotal() {
         return items.stream()
-                .mapToInt(ItemTurno::getDuracionCobrada)
+                .mapToInt(ItemTurno::getTiempoAlMomento)
                 .sum();
     }
 
     public double calcularPrecioTotal() {
         return items.stream()
-                .mapToDouble(ItemTurno::getPrecioCobrado)
+                .mapToDouble(ItemTurno::getPrecioAlMomento)
                 .sum();
     }
     //Metodos de restricción de turnos
@@ -85,7 +85,7 @@ public class Turno {
                 // Excluimos la guardería porque el veterinario no se queda con el animal
                 if (!(item.getServicio() instanceof ServicioGuarderia)) {
                     // Usamos el tiempo guardado en el detalle del turno
-                    minutosOcupado += item.getDuracionCobrada(); 
+                    minutosOcupado += item.getTiempoAlMomento(); 
                 }
             }
         }

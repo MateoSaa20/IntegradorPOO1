@@ -14,8 +14,10 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxListCell;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.CheckBoxTableCell;
 
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -44,7 +46,18 @@ public class TurnoViewController {
     @FXML private TableColumn<Turno, String> colDuracion;
     @FXML private TableColumn<Turno, String> colPrecioTotal;
     @FXML private TableColumn<Turno, String> colServicios;
-    
+    @FXML private TableView<ServicioSelection> tablaSeleccionServicios;
+    @FXML private TableColumn<ServicioSelection, Boolean> colServicioIncluir;
+    @FXML private TableColumn<ServicioSelection, String> colServicioNombre;
+    @FXML private TableColumn<ServicioSelection, String> colServicioDuracion;
+    @FXML private TableColumn<ServicioSelection, String> colServicioPrecio;
+
+    // Controles de Guardería
+    @FXML private HBox boxGuarderia;
+    @FXML private DatePicker dpIngresoGuarderia;
+    @FXML private DatePicker dpSalidaGuarderia;
+
+
     @FXML private ListView<ServicioSelection> listServicios;
     @FXML private Label lblPrecioTotal;
 
@@ -65,32 +78,60 @@ public class TurnoViewController {
         veterinarioRepository = new VeterinarioRepository(em);
         servicioRepository = new ServicioRepository(em);
 
-        // 1. Cargar servicios en el ListView con CheckBoxes (Selección múltiple)
+      // 1. Traer servicios desde la BD
         List<Servicio> serviciosBD = servicioRepository.buscarTodos();
+
+        // Print de depuración para ver en la consola de VS Code cuántos encuentra realmente
+        System.out.println(">>> SERVICIOS ENCONTRADOS EN BD: " + serviciosBD.size());
+
         listaServiciosSeleccionables.clear();
 
         for (Servicio s : serviciosBD) {
             ServicioSelection item = new ServicioSelection(s);
-            // Listener para recalcular el precio total dinámicamente
-            item.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> recalcularMontoTotal());
+            
+            // Listener para recalcular total y activar guardería si se marca la casilla
+            item.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+                recalcularMontoTotal();
+                evaluarSeleccionGuarderia();
+            });
+            
             listaServiciosSeleccionables.add(item);
         }
 
-        listServicios.setItems(listaServiciosSeleccionables);
-        listServicios.setCellFactory(CheckBoxListCell.forListView(ServicioSelection::selectedProperty));
+        // 2. Asignar la lista a la tabla
+        tablaSeleccionServicios.setItems(listaServiciosSeleccionables);
+        tablaSeleccionServicios.refresh();
+                // Configurar columnas de la tabla de selección
+            // 1. Cargar Estados (REGLA DE NEGOCIO: Al registrar, inicia en PENDIENTE)
+            cmbEstado.setItems(FXCollections.observableArrayList(EstadoTurno.PENDIENTE));
+            cmbEstado.setValue(EstadoTurno.PENDIENTE);
+            cmbEstado.setDisable(true); // Bloqueado para que no se pueda registrar en ACEPTADO ni ATENDIDO
 
-        // 2. Columna 'Servicios' en la tabla de turnos
-        colServicios.setCellValueFactory(cellData -> {
-            Turno t = cellData.getValue();
-            if (t.getItems() == null || t.getItems().isEmpty()) {
-                return new SimpleStringProperty("-");
+            // 2. Configurar columnas de la Tabla de Servicios
+            colServicioIncluir.setCellValueFactory(cellData -> cellData.getValue().selectedProperty());
+            colServicioIncluir.setCellFactory(CheckBoxTableCell.forTableColumn(colServicioIncluir));
+
+            colServicioNombre.setCellValueFactory(cellData -> 
+                new SimpleStringProperty(cellData.getValue().getServicio().getNombre()));
+
+            colServicioDuracion.setCellValueFactory(cellData -> 
+                new SimpleStringProperty(cellData.getValue().getServicio().getDuracionMinutos() + " min"));
+
+            colServicioPrecio.setCellValueFactory(cellData -> 
+                new SimpleStringProperty(String.format("$ %.2f", cellData.getValue().getSubtotal())));
+
+            // Listener para detectar si se seleccionó un ServicioGuarderia
+            for (Servicio s : servicioRepository.buscarTodos()) {
+                ServicioSelection item = new ServicioSelection(s);
+                item.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+                    recalcularMontoTotal();
+                    evaluarSeleccionGuarderia();
+                });
+                listaServiciosSeleccionables.add(item);
             }
-            String nombres = t.getItems().stream()
-                    .map(item -> item.getServicio().getNombre())
-                    .collect(Collectors.joining(", "));
-            return new SimpleStringProperty(nombres);
-        });
 
+        tablaSeleccionServicios.setItems(listaServiciosSeleccionables);
+        tablaSeleccionServicios.setEditable(true);
         // 3. Cargar Estados, Clientes y Veterinarios
         cmbEstado.setItems(FXCollections.observableArrayList(EstadoTurno.values()));
         cmbEstado.setValue(EstadoTurno.PENDIENTE);
@@ -313,27 +354,45 @@ public class TurnoViewController {
         }
     }
 
-    private boolean validarCampos() {
-        boolean hayServiciosSeleccionados = listaServiciosSeleccionables.stream().anyMatch(ServicioSelection::isSelected);
+   private boolean validarCampos() {
+    boolean hayServicios = listaServiciosSeleccionables.stream().anyMatch(ServicioSelection::isSelected);
 
-        if (cmbCliente.getValue() == null || cmbMascota.getValue() == null ||
-            cmbVeterinario.getValue() == null || dpFecha.getValue() == null || 
-            txtHora.getText().trim().isEmpty() || cmbEstado.getValue() == null ||
-            !hayServiciosSeleccionados) {
+    if (cmbCliente.getValue() == null || cmbMascota.getValue() == null ||
+        cmbVeterinario.getValue() == null || dpFecha.getValue() == null || 
+        txtHora.getText().trim().isEmpty() || !hayServicios) {
 
-            mostrarAlerta("Atención", "Por favor, complete todos los campos requeridos y seleccione al menos un servicio.");
-            return false;
-        }
-
-        try {
-            LocalTime.parse(txtHora.getText().trim(), timeFormatter);
-        } catch (Exception e) {
-            mostrarAlerta("Atención", "Formato de hora inválido. Ejemplo: 09:30 o 15:00.");
-            return false;
-        }
-
-        return true;
+        mostrarAlerta("Atención", "Complete todos los campos requeridos y seleccione al menos un servicio.");
+        return false;
     }
+
+    // Validar fechas de guardería si está tildada
+    boolean tieneGuarderia = listaServiciosSeleccionables.stream()
+            .anyMatch(s -> s.isSelected() && s.getServicio() instanceof ServicioGuarderia);
+
+    if (tieneGuarderia) {
+        if (dpIngresoGuarderia.getValue() == null || dpSalidaGuarderia.getValue() == null) {
+            mostrarAlerta("Atención", "Debe ingresar las fechas de entrada y salida para el servicio de Guardería.");
+            return false;
+        }
+        if (dpSalidaGuarderia.getValue().isBefore(dpIngresoGuarderia.getValue())) {
+            mostrarAlerta("Atención", "La fecha de salida de la guardería no puede ser anterior a la de ingreso.");
+            return false;
+        }
+    }
+
+    return true;
+}
+
+    private void evaluarSeleccionGuarderia() {
+    boolean tieneGuarderia = listaServiciosSeleccionables.stream()
+            .anyMatch(s -> s.isSelected() && s.getServicio() instanceof ServicioGuarderia);
+
+    boxGuarderia.setDisable(!tieneGuarderia);
+    if (!tieneGuarderia) {
+        dpIngresoGuarderia.setValue(null);
+        dpSalidaGuarderia.setValue(null);
+    }
+}
 
     private void limpiarCampos() {
         cmbCliente.setValue(null);

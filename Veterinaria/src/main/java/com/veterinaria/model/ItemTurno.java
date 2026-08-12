@@ -13,10 +13,10 @@ public class ItemTurno {
 
     // Regla de Negocio: Se guarda el valor histórico del servicio en ese momento
     @Column(nullable = false)
-    private Double precioCobrado;
+    private Double precioAlMomento;
 
     @Column(name = "duracion_cobrada", nullable = false)
-    private Integer duracionCobrada;
+    private Integer tiempoAlMomento;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_turno", nullable = false)
@@ -36,19 +36,19 @@ public class ItemTurno {
         this.servicio = servicio;
         this.turno = turno;
         // Congelamos el precio y duración actual del servicio
-        this.precioCobrado = servicio.getPrecio();
-        this.duracionCobrada = servicio.getDuracionMinutos();
+        this.precioAlMomento = servicio.getPrecio();
+        this.tiempoAlMomento = servicio.getDuracionMinutos();
     }
 
     // Getters y Setters
     public Long getIdItem() { return idItem; }
     public void setIdItem(Long idItem) { this.idItem = idItem; }
 
-    public Double getPrecioCobrado() { return precioCobrado; }
-    public void setPrecioCobrado(Double precioCobrado) { this.precioCobrado = precioCobrado; }
+    public Double getPrecioAlMomento() { return precioAlMomento; }
+    public void setPrecioAlMomento(Double precioAlMomento) { this.precioAlMomento = precioAlMomento; }
 
-    public Integer getDuracionCobrada() { return duracionCobrada; }
-    public void setDuracionCobrada(Integer duracionCobrada) { this.duracionCobrada = duracionCobrada; }
+    public Integer getTiempoAlMomento() { return tiempoAlMomento; }
+    public void setTiempoAlMomento(Integer tiempoAlMomento) { this.tiempoAlMomento = tiempoAlMomento; }
 
     public Turno getTurno() { return turno; }
     public void setTurno(Turno turno) { this.turno = turno; }
