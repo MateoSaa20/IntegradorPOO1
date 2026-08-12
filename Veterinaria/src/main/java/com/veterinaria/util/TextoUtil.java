@@ -2,6 +2,9 @@ package com.veterinaria.util;
 
 public class TextoUtil {
 
+    public static final String SOLO_LETRAS = "[\\p{L}\\p{M}\\s]*";
+    public static final String NO_LETRAS = "[^\\p{L}\\p{M}\\s]";
+
     private TextoUtil() {
     }
 

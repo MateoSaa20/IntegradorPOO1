@@ -30,10 +30,10 @@ public class Cliente {
     private String apellido;
 
     @Column(nullable = false, unique = true, length = 15)
-    private int dni;
+    private String dni;
 
     @Column(nullable = false, length = 20)
-    private int telefono;
+    private String telefono;
 
     @OneToMany(
             mappedBy = "cliente",
@@ -47,8 +47,8 @@ public class Cliente {
 
     public Cliente(String nombre,
                    String apellido,
-                   int dni,
-                   int telefono) {
+                   String dni,
+                   String telefono) {
 
         setNombre(nombre);
         setApellido(apellido);
@@ -80,11 +80,11 @@ public class Cliente {
         return apellido;
     }
 
-    public int getDni() {
+    public String getDni() {
         return dni;
     }
 
-    public int getTelefono() {
+    public String getTelefono() {
         return telefono;
     }
 
@@ -106,11 +106,11 @@ public class Cliente {
         this.apellido = TextoUtil.capitalizar(apellido);
     }
 
-    public void setDni(int dni) {
+    public void setDni(String dni) {
         this.dni = dni;
     }
 
-    public void setTelefono(int telefono) {
+    public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
 }

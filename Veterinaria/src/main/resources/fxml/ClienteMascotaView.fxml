@@ -31,7 +31,7 @@
 
                 <HBox spacing="5.0" alignment="CENTER_LEFT">
                     <Label text="Teléfono:"/>
-                    <TextField fx:id="txtTelefono" prefWidth="130.0"/>
+                    <TextField fx:id="txtTelefono" prefWidth="160.0"/>
                 </HBox>
             </HBox>
 

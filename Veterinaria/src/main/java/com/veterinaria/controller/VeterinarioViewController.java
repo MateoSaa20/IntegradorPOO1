@@ -112,8 +112,8 @@ public class VeterinarioViewController {
     private void configurarValidacionesTexto() {
         for (TextField campo : List.of(txtNombre, txtApellido)) {
             campo.textProperty().addListener((obs, oldVal, newVal) -> {
-                if (!newVal.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]*")) {
-                    campo.setText(newVal.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]", ""));
+                if (!newVal.matches(TextoUtil.SOLO_LETRAS)) {
+                    campo.setText(newVal.replaceAll(TextoUtil.NO_LETRAS, ""));
                 }
             });
             campo.focusedProperty().addListener((obs, oldVal, focused) -> {

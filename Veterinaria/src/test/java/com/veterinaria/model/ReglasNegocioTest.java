@@ -418,7 +418,7 @@ public class ReglasNegocioTest {
 
     @Test
     public void clienteCapitalizaNombreYApellido() {
-        Cliente cliente = new Cliente("juan carlos", "perez garcia", 12345678, 11111111);
+        Cliente cliente = new Cliente("juan carlos", "perez garcia", "12345678", "1111111111");
 
         assertEquals("Juan Carlos", cliente.getNombre());
         assertEquals("Perez Garcia", cliente.getApellido());

@@ -134,17 +134,21 @@ cmbEspecie.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, 
 
         // Validaciones numéricas en tiempo real
         txtDni.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal.matches("\\d*")) txtDni.setText(newVal.replaceAll("[^\\d]", ""));
+            String soloDigitos = newVal.replaceAll("[^\\d]", "");
+            if (soloDigitos.length() > 8) soloDigitos = soloDigitos.substring(0, 8);
+            if (!soloDigitos.equals(newVal)) txtDni.setText(soloDigitos);
         });
         txtTelefono.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal.matches("\\d*")) txtTelefono.setText(newVal.replaceAll("[^\\d]", ""));
+            String soloDigitos = newVal.replaceAll("[^\\d]", "");
+            if (soloDigitos.length() > 12) soloDigitos = soloDigitos.substring(0, 12);
+            if (!soloDigitos.equals(newVal)) txtTelefono.setText(soloDigitos);
         });
         // Filtro en vivo: solo letras, espacios y caracteres acentuados.
         // La capitalización se aplica al perder el foco (así no se traga
         // los espacios mientras se escribe la siguiente palabra).
         txtNombre.textProperty().addListener((obs, oldValue, newValue) -> {
-            if (!newValue.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]*")) {
-                txtNombre.setText(newValue.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]", ""));
+            if (!newValue.matches(TextoUtil.SOLO_LETRAS)) {
+                txtNombre.setText(newValue.replaceAll(TextoUtil.NO_LETRAS, ""));
             }
         });
         txtNombre.focusedProperty().addListener((obs, oldValue, focused) -> {
@@ -153,8 +157,8 @@ cmbEspecie.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, 
 
     // Restringir Apellido a solo letras, espacios y caracteres acentuados
     txtApellido.textProperty().addListener((obs, oldValue, newValue) -> {
-        if (!newValue.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]*")) {
-            txtApellido.setText(newValue.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]", ""));
+        if (!newValue.matches(TextoUtil.SOLO_LETRAS)) {
+            txtApellido.setText(newValue.replaceAll(TextoUtil.NO_LETRAS, ""));
         }
     });
     txtApellido.focusedProperty().addListener((obs, oldValue, focused) -> {
@@ -163,8 +167,8 @@ cmbEspecie.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, 
 
     // Restringir Nombre de Mascota a solo letras, espacios y caracteres acentuados
     txtMascotaNombre.textProperty().addListener((obs, oldValue, newValue) -> {
-        if (!newValue.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]*")) {
-            txtMascotaNombre.setText(newValue.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]", ""));
+        if (!newValue.matches(TextoUtil.SOLO_LETRAS)) {
+            txtMascotaNombre.setText(newValue.replaceAll(TextoUtil.NO_LETRAS, ""));
         }
     });
     txtMascotaNombre.focusedProperty().addListener((obs, oldValue, focused) -> {
@@ -187,7 +191,7 @@ cmbEspecie.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, 
                 this.clienteEnEdicion = cliente; // Guardamos el cliente seleccionado
                 txtNombre.setText(cliente.getNombre());
                 txtApellido.setText(cliente.getApellido());
-                txtDni.setText(String.valueOf(cliente.getDni()));
+                txtDni.setText(cliente.getDni());
                 txtTelefono.setText(String.valueOf(cliente.getTelefono()));
                 cargarMascotasDelCliente(cliente);
             }
@@ -226,8 +230,8 @@ cmbEspecie.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, 
             Cliente nuevo = new Cliente(
                 txtNombre.getText().trim(),
                 txtApellido.getText().trim(),
-                Integer.parseInt(txtDni.getText().trim()),
-                Integer.parseInt(txtTelefono.getText().trim())
+                txtDni.getText().trim(),
+                txtTelefono.getText().trim()
             );
             clienteController.registrarCliente(nuevo);
             cargarClientes();
@@ -250,8 +254,8 @@ cmbEspecie.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, 
         try {
             clienteEnEdicion.setNombre(txtNombre.getText().trim());
             clienteEnEdicion.setApellido(txtApellido.getText().trim());
-            clienteEnEdicion.setDni(Integer.parseInt(txtDni.getText().trim()));
-            clienteEnEdicion.setTelefono(Integer.parseInt (txtTelefono.getText().trim()));
+            clienteEnEdicion.setDni(txtDni.getText().trim());
+            clienteEnEdicion.setTelefono(txtTelefono.getText().trim());
 
             clienteController.actualizar(clienteEnEdicion);
 
@@ -403,14 +407,20 @@ public void editarMascota() {
     private boolean validarCamposCliente() {
         if (txtNombre.getText().trim().isEmpty() || 
             txtApellido.getText().trim().isEmpty() || 
-            txtDni.getText().trim().isEmpty()) {
+            txtDni.getText().trim().isEmpty() ||
+            txtTelefono.getText().trim().isEmpty()) {
             
-            mostrarAlerta("Atención", "Por favor, complete al menos Nombre, Apellido y DNI.");
+            mostrarAlerta("Atención", "Por favor, complete al menos Nombre, Apellido, DNI y Teléfono.");
             return false;
         }
 
-        if (txtDni.getText().trim().length() < 7) {
-            mostrarAlerta("Atención", "El DNI ingresado no es válido (debe tener al menos 7 dígitos).");
+        if (txtDni.getText().trim().length() > 8) {
+            mostrarAlerta("Atención", "El DNI ingresado no es válido (debe tener hasta 8 dígitos).");
+            return false;
+        }
+
+        if (txtTelefono.getText().trim().length() > 12) {
+            mostrarAlerta("Atención", "El teléfono no es válido (debe tener hasta 12 dígitos).");
             return false;
         }
 
