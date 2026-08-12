@@ -14,7 +14,12 @@
             <Separator />
             <Button text="Clientes y Mascotas" onAction="#mostrarClientes" maxWidth="17976931348623157e308"/>
             <Button text="Gestión de Turnos" onAction="#mostrarTurnos" maxWidth="17976931348623157e308"/>
+            <Button text="Atención de Turnos" onAction="#mostrarAtencion" maxWidth="17976931348623157e308"/>
             <Button text="Historial y Vacunas" onAction="#mostrarHistorial" maxWidth="17976931348623157e308"/>
+            <Separator />
+            <Button text="Servicios" onAction="#mostrarServicios" maxWidth="17976931348623157e308"/>
+            <Button text="Tipos de Vacuna" onAction="#mostrarTipoVacunas" maxWidth="17976931348623157e308"/>
+            <Button text="Veterinarios" onAction="#mostrarVeterinarios" maxWidth="17976931348623157e308"/>
         </VBox>
     </left>
 

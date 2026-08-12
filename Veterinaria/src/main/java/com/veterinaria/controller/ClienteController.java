@@ -72,6 +72,8 @@ public class ClienteController {
 }
 
     public void agregarMascotaACliente(long idCliente, Mascota mascota) {
+        mascota.validarFechaNacimiento();
+
         try {
             em.getTransaction().begin();
 

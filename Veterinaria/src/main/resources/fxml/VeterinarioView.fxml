@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="15.0" xmlns="http://javafx.com/fxml/1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.veterinaria.controller.VeterinarioViewController"
+      style="-fx-padding: 15;">
+
+    <Label text="Gestión de Veterinarios" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <TitledPane text="Veterinarios" animated="false">
+        <VBox spacing="10.0">
+            <!-- Fila superior: Carga de Datos del Veterinario -->
+            <HBox spacing="15.0" alignment="CENTER_LEFT">
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Nombre:"/>
+                    <TextField fx:id="txtNombre" prefWidth="140.0"/>
+                </HBox>
+
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Apellido:"/>
+                    <TextField fx:id="txtApellido" prefWidth="140.0"/>
+                </HBox>
+
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Matrícula:"/>
+                    <TextField fx:id="txtMatricula" prefWidth="140.0"/>
+                </HBox>
+            </HBox>
+
+            <!-- Selección de Especialidades -->
+            <VBox spacing="5.0">
+                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                    <Label text="Especialidades:" style="-fx-font-weight: bold;"/>
+                    <Button text="Nueva Especialidad..." onAction="#nuevaEspecialidad"/>
+                </HBox>
+                <TableView fx:id="tablaEspecialidades" prefHeight="120.0" editable="true">
+                    <columns>
+                        <TableColumn fx:id="colEspIncluir" text="Incluir" prefWidth="60.0"/>
+                        <TableColumn fx:id="colEspNombre" text="Especialidad" prefWidth="180.0"/>
+                        <TableColumn fx:id="colEspDetalle" text="Detalle" prefWidth="300.0"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <!-- Tabla de Veterinarios -->
+            <TableView fx:id="tablaVeterinarios" prefHeight="220.0">
+                <columns>
+                    <TableColumn fx:id="colMatricula" text="Matrícula" prefWidth="120.0"/>
+                    <TableColumn fx:id="colVetNombre" text="Nombre" prefWidth="160.0"/>
+                    <TableColumn fx:id="colVetApellido" text="Apellido" prefWidth="160.0"/>
+                    <TableColumn fx:id="colEspecialidades" text="Especialidades" prefWidth="240.0"/>
+                </columns>
+            </TableView>
+
+            <!-- Fila inferior: Botones -->
+            <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                <Button text="Guardar Veterinario" onAction="#guardarVeterinario"/>
+                <Button text="Editar Veterinario" onAction="#editarVeterinario"/>
+                <Button text="Eliminar Veterinario" onAction="#eliminarVeterinario" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+            </HBox>
+        </VBox>
+    </TitledPane>
+</VBox>

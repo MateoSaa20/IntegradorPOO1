@@ -165,8 +165,9 @@ public class TurnoTest {
     @Test
     public void testCancelarDesdePendiente_Exitoso() throws Exception {
         turnoBase.setEstado(EstadoTurno.PENDIENTE);
-        
-        // La fecha actual no importa mucho aquí, pero pasamos una cualquiera
+        // Turno con más de 24 horas de anticipación para poder cancelarlo
+        turnoBase.setFechaHora(LocalDateTime.now().plusDays(2));
+
         turnoBase.cancelar(LocalDateTime.now()); 
         
         assertEquals(EstadoTurno.CANCELADO, turnoBase.getEstado());

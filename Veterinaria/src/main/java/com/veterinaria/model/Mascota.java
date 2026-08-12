@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 import jakarta.persistence.*;
 
+import com.veterinaria.util.TextoUtil;
+
 @Entity
 @Table(name = "mascotas")
 public class Mascota {
@@ -39,7 +41,7 @@ public class Mascota {
                    Sexo sexo,
                    Raza raza) {
 
-        this.nombre = nombre;
+        setNombre(nombre);
         this.fechaNacimiento = fechaNacimiento;
         this.sexo = sexo;
         this.raza = raza;
@@ -78,7 +80,7 @@ public class Mascota {
     // ===== Setters =====
 
     public void setNombre(String nombre) {
-        this.nombre = nombre;
+        this.nombre = TextoUtil.capitalizar(nombre);
     }
 
     public void setEspecie(Especie especie) {
@@ -101,6 +103,15 @@ public class Mascota {
 
     public void setRaza(Raza raza) {
         this.raza = raza;
+    }
+
+    public void validarFechaNacimiento() {
+        if (fechaNacimiento == null) {
+            throw new IllegalArgumentException("La fecha de nacimiento es obligatoria.");
+        }
+        if (fechaNacimiento.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("La fecha de nacimiento no puede ser posterior a la fecha actual.");
+        }
     }
 
     @Override

@@ -2,10 +2,10 @@ package com.veterinaria.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
 @Entity
-@DiscriminatorValue("GUARDERIA")
+@Table(name = "item_guarderia")
 public class ItemGuarderia extends ItemTurno {
 
     @Column(name = "fecha_hora_inicio", nullable = false)
@@ -16,40 +16,66 @@ public class ItemGuarderia extends ItemTurno {
 
     public ItemGuarderia() {}
 
-    public ItemGuarderia(Servicio servicio, Turno turno, LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFin) {
+    public ItemGuarderia(ServicioGuarderia servicio, Turno turno, LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFin) {
         super(servicio, turno);
         this.fechaHoraInicio = fechaHoraInicio;
         this.fechaHoraFin = fechaHoraFin;
-        
-        // Regla de Negocio: Calcular el precio y la duración cobrada según el rango de tiempo
+
         recalcularValoresHistoricos(servicio);
     }
 
     /**
-     * Calcula la cantidad de horas o días entre fechaHoraInicio y fechaHoraFin
-     * para asignar el precioCobrado y duracionCobrada dinámicamente.
+     * Regla de negocio: el precio cobrado depende de la cantidad de días
+     * (ingreso y salida el mismo día = 1 día; salida al día siguiente = 2, etc.).
+     * El tiempo cobrado es la cantidad de minutos entre ingreso y salida.
      */
-    private void recalcularValoresHistoricos(Servicio servicio) {
+    private void recalcularValoresHistoricos(ServicioGuarderia servicio) {
         if (fechaHoraInicio != null && fechaHoraFin != null && servicio != null) {
-            long minutosTotales = Duration.between(fechaHoraInicio, fechaHoraFin).toMinutes();
-            
-            // Si el servicio se cobra por día (ej: cada 24hs)
-            long dias = (long) Math.ceil((double) minutosTotales / (24 * 60));
-            if (dias < 1) dias = 1; // Cobro mínimo de 1 día
+            long minutosTotales = ChronoUnit.MINUTES.between(fechaHoraInicio, fechaHoraFin);
+            if (minutosTotales < 0) minutosTotales = 0;
 
             setTiempoAlMomento((int) minutosTotales);
-            setPrecioAlMomento(servicio.getPrecio() * dias);
+            setPrecioAlMomento(servicio.calcularSubtotalPorDias(fechaHoraInicio, fechaHoraFin));
         }
+    }
+
+    /**
+     * Regla de negocio: la guardería no puede iniciar en un día u hora anterior
+     * a la actual, y la salida debe ser posterior al ingreso.
+     */
+    public void validarRango(LocalDateTime ahora) throws Exception {
+        if (fechaHoraInicio == null || fechaHoraFin == null) {
+            throw new Exception("Debe indicar el ingreso y la salida de la guardería.");
+        }
+
+        if (fechaHoraInicio.isBefore(ahora)) {
+            throw new Exception("La guardería no puede iniciar en un día u hora anterior a la fecha y hora actual.");
+        }
+
+        if (!fechaHoraFin.isAfter(fechaHoraInicio)) {
+            throw new Exception("La salida de la guardería debe ser posterior al ingreso.");
+        }
+    }
+
+    /**
+     * Cantidad de días cobrados según la regla: días entre ingreso y salida + 1 (mínimo 1).
+     */
+    public long calcularCantidadDias() {
+        if (fechaHoraInicio == null || fechaHoraFin == null) {
+            return 1;
+        }
+        long dias = ChronoUnit.DAYS.between(fechaHoraInicio.toLocalDate(), fechaHoraFin.toLocalDate()) + 1;
+        return Math.max(dias, 1);
     }
 
     // Getters y Setters
     public LocalDateTime getFechaHoraInicio() { return fechaHoraInicio; }
-    public void setFechaHoraInicio(LocalDateTime fechaHoraInicio) { 
-        this.fechaHoraInicio = fechaHoraInicio; 
+    public void setFechaHoraInicio(LocalDateTime fechaHoraInicio) {
+        this.fechaHoraInicio = fechaHoraInicio;
     }
 
     public LocalDateTime getFechaHoraFin() { return fechaHoraFin; }
-    public void setFechaHoraFin(LocalDateTime fechaHoraFin) { 
-        this.fechaHoraFin = fechaHoraFin; 
+    public void setFechaHoraFin(LocalDateTime fechaHoraFin) {
+        this.fechaHoraFin = fechaHoraFin;
     }
 }

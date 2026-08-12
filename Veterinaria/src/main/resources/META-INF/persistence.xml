@@ -28,8 +28,10 @@
         <class>com.veterinaria.model.TipoVacuna</class>
         <class>com.veterinaria.model.Tratamiento</class>
         <class>com.veterinaria.model.ItemTurno</class>
+        <class>com.veterinaria.model.ItemGuarderia</class>
         <class>com.veterinaria.model.DetalleAtencion</class>
         <class>com.veterinaria.model.DetalleConsulta</class>
+        <class>com.veterinaria.model.DetalleVacunacion</class>
 
 
 
@@ -53,8 +55,7 @@
 
             <!-- Hibernate -->
             <property name="hibernate.hbm2ddl.auto"
-                      value="create-drop"/>
-    <!--se tiene que cambiar el create a update cuando el proyecto esté terminado-->
+                      value="update"/>
 
             <property name="hibernate.show_sql"
                       value="true"/>

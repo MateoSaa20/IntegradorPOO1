@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "item_turno")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class ItemTurno {
 
     @Id
@@ -36,7 +37,7 @@ public class ItemTurno {
         this.servicio = servicio;
         this.turno = turno;
         // Congelamos el precio y duración actual del servicio
-        this.precioAlMomento = servicio.getPrecio();
+        this.precioAlMomento = servicio.calcularSubtotal();
         this.tiempoAlMomento = servicio.getDuracionMinutos();
     }
 

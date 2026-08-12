@@ -74,6 +74,16 @@ public class Turno {
     }
     //Metodos de restricción de turnos
     /**
+     * Regla de negocio: un turno no puede agendarse en un día u hora
+     * anterior (o igual) a la fecha y hora actual.
+     */
+    public void validarFechaFutura(LocalDateTime ahora) throws Exception {
+        if (fechaHora == null || !fechaHora.isAfter(ahora)) {
+            throw new Exception("Error: El turno debe agendarse para un día y hora futuros a la fecha y hora actual.");
+        }
+    }
+
+    /**
      * Calcula a qué hora se libera el veterinario sumando el 'tiempoAlMomento'
      * de los ItemTurno, excluyendo servicios como Guardería.
      */
@@ -94,34 +104,97 @@ public class Turno {
     }
 
     /**
+     * Calcula hasta qué hora la mascota está ocupada. A diferencia del
+     * veterinario, aquí TODOS los servicios cuentan (la guardería ocupa
+     * a la mascota aunque no al veterinario). Como el ingreso de la
+     * guardería coincide con el inicio del turno, sumar los minutos de
+     * cada item (guardería incluida) cubre también las estadías de varios días.
+     */
+    public LocalDateTime calcularFinOcupacionMascota() {
+        int minutosOcupado = 0;
+
+        if (this.items != null) {
+            for (ItemTurno item : this.items) {
+                minutosOcupado += item.getTiempoAlMomento();
+            }
+        }
+
+        return this.fechaHora.plusMinutes(minutosOcupado);
+    }
+
+    /**
      * Comprueba si este turno choca en horario con otro turno dado.
      */
     public boolean seSuperponeCon(Turno otroTurno) {
-        LocalDateTime miInicio = this.fechaHora;
-        LocalDateTime miFin = this.calcularFinOcupacionVeterinario();
+        return seSuperponeRangos(
+                this.fechaHora,
+                this.calcularFinOcupacionVeterinario(),
+                otroTurno.getFechaHora(),
+                otroTurno.calcularFinOcupacionVeterinario()
+        );
+    }
 
-        LocalDateTime otroInicio = otroTurno.getFechaHora();
-        LocalDateTime otroFin = otroTurno.calcularFinOcupacionVeterinario();
+    /**
+     * Comprueba si la mascota de este turno choca en horario con la de otro
+     * turno, considerando la ocupación real de la mascota (guardería incluida).
+     */
+    public boolean seSuperponeMascotaCon(Turno otroTurno) {
+        return seSuperponeRangos(
+                this.fechaHora,
+                this.calcularFinOcupacionMascota(),
+                otroTurno.getFechaHora(),
+                otroTurno.calcularFinOcupacionMascota()
+        );
+    }
 
-        // Si mi tiempo de ocupación es cero (ej. solo guardería), no hay superposición para el veterinario
-        if (miInicio.isEqual(miFin) || otroInicio.isEqual(otroFin)) {
-            return false; 
+    private static boolean seSuperponeRangos(LocalDateTime inicioA,
+                                             LocalDateTime finA,
+                                             LocalDateTime inicioB,
+                                             LocalDateTime finB) {
+        // Si alguno no ocupa tiempo (ej. solo guardería para el veterinario),
+        // no hay superposición para esa persona/animal.
+        if (inicioA == null || finA == null || inicioB == null || finB == null) {
+            return false;
+        }
+        if (inicioA.isEqual(finA) || inicioB.isEqual(finB)) {
+            return false;
         }
 
         // Fórmula de solapamiento de rangos de tiempo
-        return miInicio.isBefore(otroFin) && miFin.isAfter(otroInicio);
+        return inicioA.isBefore(finB) && finA.isAfter(inicioB);
     }
 
     /**
      * Valida el turno actual contra una lista de turnos existentes del mismo día.
      * Lanza excepción si encuentra un solapamiento.
+     * Los turnos CANCELADOS liberan el horario y no bloquean el agendamiento.
      */
     public void validarDisponibilidad(List<Turno> turnosDelDia) throws Exception {
         for (Turno turnoExistente : turnosDelDia) {
+            if (turnoExistente.getEstado() == EstadoTurno.CANCELADO) {
+                continue;
+            }
             if (this.seSuperponeCon(turnoExistente)) {
                 throw new Exception("Error: El turno se superpone con otro agendado para este veterinario " +
                                     "desde las " + turnoExistente.getFechaHora().toLocalTime() + 
                                     " hasta las " + turnoExistente.calcularFinOcupacionVeterinario().toLocalTime());
+            }
+        }
+    }
+
+    /**
+     * Valida que la mascota no tenga otro turno en el mismo horario (con
+     * cualquier veterinario). Los turnos CANCELADOS liberan a la mascota.
+     */
+    public void validarDisponibilidadMascota(List<Turno> turnosDeLaMascota) throws Exception {
+        for (Turno turnoExistente : turnosDeLaMascota) {
+            if (turnoExistente.getEstado() == EstadoTurno.CANCELADO) {
+                continue;
+            }
+            if (this.seSuperponeMascotaCon(turnoExistente)) {
+                throw new Exception("Error: La mascota ya tiene un turno en ese horario " +
+                                    "desde las " + turnoExistente.getFechaHora().toLocalTime() +
+                                    " hasta las " + turnoExistente.calcularFinOcupacionMascota().toLocalTime());
             }
         }
     }

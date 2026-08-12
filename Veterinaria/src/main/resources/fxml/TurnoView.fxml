@@ -38,7 +38,7 @@
                         <TableColumn fx:id="colServicioIncluir" text="Incluir" prefWidth="60.0"/>
                         <TableColumn fx:id="colServicioNombre" text="Servicio" prefWidth="200.0"/>
                         <TableColumn fx:id="colServicioDuracion" text="Duración" prefWidth="90.0"/>
-                        <TableColumn fx:id="colServicioPrecio" text="Subtotal" prefWidth="100.0"/>
+                        <TableColumn fx:id="colServicioPrecio" text="Precio" prefWidth="100.0"/>
                     </columns>
                 </TableView>
             </VBox>
@@ -46,12 +46,13 @@
             <!-- Fila 3: Sección Especial para Guardería (Fechas Ingreso/Salida) -->
             <HBox spacing="15.0" alignment="CENTER_LEFT" fx:id="boxGuarderia" disable="true">
                 <HBox spacing="5.0" alignment="CENTER_LEFT">
-                    <Label text="Ingreso Guardería:"/>
-                    <DatePicker fx:id="dpIngresoGuarderia" prefWidth="130.0"/>
+                    <Label text="Ingreso (inicio del turno):"/>
+                    <DatePicker fx:id="dpIngresoGuarderia" prefWidth="130.0" disable="true"/>
                 </HBox>
                 <HBox spacing="5.0" alignment="CENTER_LEFT">
                     <Label text="Salida Guardería:"/>
                     <DatePicker fx:id="dpSalidaGuarderia" prefWidth="130.0"/>
+                    <TextField fx:id="txtHoraSalida" prefWidth="70.0" promptText="18:00"/>
                 </HBox>
             </HBox>
 
@@ -97,7 +98,6 @@
             <HBox spacing="10.0" alignment="CENTER_RIGHT">
                 <Button text="Agendar Turno" onAction="#agendarTurno"/>
                 <Button text="Confirmar" onAction="#confirmarTurno"/>
-                <Button text="Atender" onAction="#atenderTurno"/>
                 <Button text="Cancelar Turno" onAction="#cancelarTurno"/>
             </HBox>
         </VBox>

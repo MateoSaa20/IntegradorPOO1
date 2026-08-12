@@ -1,5 +1,6 @@
 package com.veterinaria.model;
 
+import com.veterinaria.util.TextoUtil;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,24 @@ public class Veterinario {
 
     public void quitarEspecialidad(Especialidad especialidad) {
         especialidades.remove(especialidad);
+    }
+
+    /**
+     * Regla de negocio: valida los campos obligatorios del veterinario y
+     * normaliza nombre y apellido a formato título.
+     */
+    public void validar() {
+        if (nombre == null || nombre.isBlank()) {
+            throw new IllegalArgumentException("El nombre del veterinario es obligatorio.");
+        }
+        if (apellido == null || apellido.isBlank()) {
+            throw new IllegalArgumentException("El apellido del veterinario es obligatorio.");
+        }
+        if (matricula == null || matricula.isBlank()) {
+            throw new IllegalArgumentException("La matrícula profesional es obligatoria.");
+        }
+        this.nombre = TextoUtil.capitalizar(nombre);
+        this.apellido = TextoUtil.capitalizar(apellido);
     }
 
     // Getters y setters

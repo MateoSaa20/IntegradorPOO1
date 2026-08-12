@@ -45,4 +45,17 @@ public class DetalleAtencion {
     public void setItemTurno(ItemTurno itemTurno) {
         this.itemTurno = itemTurno;
     }
+
+    /**
+     * Regla de negocio: un detalle cargado no puede quedar sin contenido.
+     * Para los servicios sin campos específicos (guardería, peluquería)
+     * las observaciones son obligatorias.
+     */
+    public void validar() {
+        if (observaciones == null || observaciones.isBlank()) {
+            throw new IllegalArgumentException(
+                    "El detalle del servicio no puede estar vacío: indique las observaciones."
+            );
+        }
+    }
 }

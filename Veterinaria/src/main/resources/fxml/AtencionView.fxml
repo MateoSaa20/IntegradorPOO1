@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="12.0" xmlns="http://javafx.com/fxml/1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.veterinaria.controller.AtencionViewController"
+      style="-fx-padding: 15;">
+
+    <Label text="Atención de Turnos" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <!-- Tabla superior: turnos CONFIRMADO listos para atender -->
+    <TitledPane text="Turnos Confirmados" animated="false">
+        <TableView fx:id="tablaTurnos" prefHeight="180.0">
+            <columns>
+                <TableColumn fx:id="colTurnoId" text="ID" prefWidth="50.0"/>
+                <TableColumn fx:id="colTurnoFechaHora" text="Fecha y Hora" prefWidth="140.0"/>
+                <TableColumn fx:id="colTurnoCliente" text="Cliente" prefWidth="140.0"/>
+                <TableColumn fx:id="colTurnoMascota" text="Mascota" prefWidth="100.0"/>
+                <TableColumn fx:id="colTurnoVeterinario" text="Veterinario" prefWidth="150.0"/>
+                <TableColumn fx:id="colTurnoServicios" text="Servicios" prefWidth="200.0"/>
+            </columns>
+        </TableView>
+    </TitledPane>
+
+    <!-- Tabla media: items (servicios) del turno seleccionado -->
+    <TitledPane text="Servicios del Turno Seleccionado" animated="false">
+        <TableView fx:id="tablaItems" prefHeight="130.0">
+            <columns>
+                <TableColumn fx:id="colItemServicio" text="Servicio" prefWidth="200.0"/>
+                <TableColumn fx:id="colItemTipo" text="Tipo" prefWidth="110.0"/>
+                <TableColumn fx:id="colItemPrecio" text="Precio" prefWidth="90.0"/>
+                <TableColumn fx:id="colItemDuracion" text="Duración" prefWidth="90.0"/>
+                <TableColumn fx:id="colItemEstadoDetalle" text="Detalle" prefWidth="90.0"/>
+            </columns>
+        </TableView>
+    </TitledPane>
+
+    <!-- Formulario adaptable según el tipo de servicio del item seleccionado -->
+    <TitledPane text="Detalle del Servicio" animated="false">
+        <VBox spacing="10.0">
+            <HBox spacing="6.0" alignment="CENTER_LEFT">
+                <Label text="Servicio:" style="-fx-font-weight: bold;"/>
+                <Label fx:id="lblServicioDetalle" text="(seleccione un servicio)"/>
+            </HBox>
+
+            <!-- Común a todos los servicios -->
+            <Label text="Observaciones:"/>
+            <TextArea fx:id="txtObservaciones" prefHeight="60.0" wrapText="true" promptText="Observaciones generales de la atención"/>
+
+            <!-- Consulta: diagnóstico + tratamientos -->
+            <HBox fx:id="boxConsulta" spacing="8.0" alignment="CENTER_LEFT" visible="false" managed="false">
+                <Label text="Diagnóstico:"/>
+                <TextField fx:id="txtDiagnostico" prefWidth="420.0" promptText="Diagnóstico (obligatorio para registrar el detalle)"/>
+            </HBox>
+
+            <VBox fx:id="boxTratamientos" spacing="8.0" visible="false" managed="false">
+                <Label text="Tratamientos:"/>
+                <TableView fx:id="tablaTratamientos" prefHeight="120.0">
+                    <columns>
+                        <TableColumn fx:id="colTratInicio" text="Fecha Inicio" prefWidth="110.0"/>
+                        <TableColumn fx:id="colTratFin" text="Fecha Fin" prefWidth="110.0"/>
+                        <TableColumn fx:id="colTratDescripcion" text="Descripción" prefWidth="280.0"/>
+                    </columns>
+                </TableView>
+                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                    <DatePicker fx:id="dpTratInicio" promptText="Inicio"/>
+                    <DatePicker fx:id="dpTratFin" promptText="Fin"/>
+                    <TextField fx:id="txtTratDescripcion" prefWidth="220.0" promptText="Descripción del tratamiento"/>
+                    <Button text="Agregar" onAction="#agregarTratamiento"/>
+                    <Button text="Quitar" onAction="#quitarTratamiento"/>
+                </HBox>
+            </VBox>
+
+            <!-- Vacunación: tipo de vacuna (solo lectura) + laboratorio y dosis -->
+            <VBox fx:id="boxVacuna" spacing="8.0" visible="false" managed="false">
+                <HBox spacing="6.0" alignment="CENTER_LEFT">
+                    <Label text="Tipo de vacuna:"/>
+                    <Label fx:id="lblTipoVacuna" text="" style="-fx-font-weight: bold;"/>
+                </HBox>
+                <TextField fx:id="txtLaboratorio" prefWidth="320.0" promptText="Laboratorio / Marca"/>
+                <TextField fx:id="txtObservacionesDosis" prefWidth="420.0" promptText="Observaciones de la dosis (ej: 1ra dosis, refuerzo a los 21 días)"/>
+            </VBox>
+
+            <!-- Mensaje de validación de contenido mínimo -->
+            <Label fx:id="lblMensaje" text="" wrapText="true" style="-fx-text-fill: #c0392b;"/>
+        </VBox>
+    </TitledPane>
+
+    <!-- Botones -->
+    <HBox spacing="10.0" alignment="CENTER_RIGHT">
+        <Button text="Guardar Detalles" onAction="#guardarDetalles"/>
+        <Button text="Atender Turno" onAction="#atenderTurno" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+    </HBox>
+</VBox>

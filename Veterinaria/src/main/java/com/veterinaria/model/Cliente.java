@@ -12,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import com.veterinaria.util.TextoUtil;
+
 @Entity
 @Table(name = "clientes")
 public class Cliente {
@@ -48,8 +50,8 @@ public class Cliente {
                    int dni,
                    int telefono) {
 
-        this.nombre = nombre;
-        this.apellido = apellido;
+        setNombre(nombre);
+        setApellido(apellido);
         this.dni = dni;
         this.telefono = telefono;
     }
@@ -97,11 +99,11 @@ public class Cliente {
     // ===== SETTERS =====
 
     public void setNombre(String nombre) {
-        this.nombre = nombre;
+        this.nombre = TextoUtil.capitalizar(nombre);
     }
 
     public void setApellido(String apellido) {
-        this.apellido = apellido;
+        this.apellido = TextoUtil.capitalizar(apellido);
     }
 
     public void setDni(int dni) {

@@ -25,8 +25,28 @@ public class MainViewController {
     }
 
     @FXML
+    public void mostrarAtencion() {
+        cargarVista("/fxml/AtencionView.fxml");
+    }
+
+    @FXML
     public void mostrarHistorial() {
         cargarVista("/fxml/HistorialView.fxml");
+    }
+
+    @FXML
+    public void mostrarServicios() {
+        cargarVista("/fxml/ServicioView.fxml");
+    }
+
+    @FXML
+    public void mostrarTipoVacunas() {
+        cargarVista("/fxml/TipoVacunaView.fxml");
+    }
+
+    @FXML
+    public void mostrarVeterinarios() {
+        cargarVista("/fxml/VeterinarioView.fxml");
     }
 
     private void cargarVista(String fxmlPath) {

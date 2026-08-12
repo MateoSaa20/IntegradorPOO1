@@ -6,8 +6,8 @@ import jakarta.persistence.*;
 @DiscriminatorValue("VACUNACION")
 public class DetalleVacunacion extends DetalleAtencion {
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_vacuna", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_tipo_vacuna", nullable = false)
     private TipoVacuna tipoVacuna;
 
     @Column(name = "laboratorio_o_marca")
@@ -33,4 +33,21 @@ public class DetalleVacunacion extends DetalleAtencion {
 
     public String getObservacionesDosis() { return observacionesDosis; }
     public void setObservacionesDosis(String observacionesDosis) { this.observacionesDosis = observacionesDosis; }
+
+    /**
+     * Regla de negocio: el detalle de una vacunación debe registrar al menos
+     * el laboratorio/marca o las observaciones de la dosis (el tipo de
+     * vacuna se toma del servicio).
+     */
+    @Override
+    public void validar() {
+        boolean sinContenido = (laboratorioOMarca == null || laboratorioOMarca.isBlank())
+                && (observacionesDosis == null || observacionesDosis.isBlank());
+
+        if (sinContenido) {
+            throw new IllegalArgumentException(
+                    "El detalle de la vacunación debe indicar al menos el laboratorio/marca o las observaciones de la dosis."
+            );
+        }
+    }
 }

@@ -1,6 +1,8 @@
 package com.veterinaria.model;
 
+import com.veterinaria.util.TextoUtil;
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "tipos_vacuna")
@@ -57,5 +59,42 @@ public class TipoVacuna{
 
     public void setPeriodicidadMeses(int periodicidadMeses) {
         this.periodicidadMeses = periodicidadMeses;
+    }
+
+    /**
+     * Regla de negocio: valida los campos obligatorios del tipo de vacuna y
+     * normaliza los textos a formato título.
+     */
+    public void validar() {
+        if (nombreComercial == null || nombreComercial.isBlank()) {
+            throw new IllegalArgumentException("El nombre comercial de la vacuna es obligatorio.");
+        }
+        if (enfermedadQuePreviene == null || enfermedadQuePreviene.isBlank()) {
+            throw new IllegalArgumentException("Debe indicar la enfermedad que previene la vacuna.");
+        }
+        if (periodicidadMeses <= 0) {
+            throw new IllegalArgumentException("La periodicidad debe ser mayor a cero.");
+        }
+        this.nombreComercial = TextoUtil.capitalizar(nombreComercial);
+        this.enfermedadQuePreviene = TextoUtil.capitalizar(enfermedadQuePreviene);
+    }
+
+    /**
+     * Regla de negocio: verifica si la fecha de una nueva aplicación cae
+     * dentro de la ventana de periodicidad de la vacuna. Si la mascota ya
+     * recibió la vacuna hace menos de periodicidadMeses, no corresponde
+     * volver a aplicarla.
+     */
+    public boolean estaDentroDePeriodicidad(LocalDate ultimaAplicacion,
+                                            LocalDate nuevaFecha) {
+
+        if (ultimaAplicacion == null || nuevaFecha == null) {
+            return false;
+        }
+
+        LocalDate proximaAplicacionValida =
+                ultimaAplicacion.plusMonths(periodicidadMeses);
+
+        return nuevaFecha.isBefore(proximaAplicacionValida);
     }
 }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="15.0" xmlns="http://javafx.com/fxml/1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.veterinaria.controller.TipoVacunaViewController"
+      style="-fx-padding: 15;">
+
+    <Label text="Tipos de Vacuna" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <TitledPane text="Carga de Tipos de Vacuna" animated="false">
+        <VBox spacing="10.0">
+            <!-- Fila superior: Carga de Datos -->
+            <HBox spacing="15.0" alignment="CENTER_LEFT">
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Nombre Comercial:"/>
+                    <TextField fx:id="txtNombreComercial" prefWidth="180.0"/>
+                </HBox>
+
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Enfermedad que Previene:"/>
+                    <TextField fx:id="txtEnfermedad" prefWidth="280.0"/>
+                </HBox>
+
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Periodicidad (meses):"/>
+                    <TextField fx:id="txtPeriodicidad" prefWidth="150.0"/>
+                </HBox>
+            </HBox>
+
+            <!-- Tabla de Tipos de Vacuna -->
+            <TableView fx:id="tablaTipoVacunas" prefHeight="320.0">
+                <columns>
+                    <TableColumn fx:id="colNombreComercial" text="Nombre Comercial" prefWidth="220.0"/>
+                    <TableColumn fx:id="colEnfermedad" text="Enfermedad que Previene" prefWidth="320.0"/>
+                    <TableColumn fx:id="colPeriodicidad" text="Periodicidad (meses)" prefWidth="160.0"/>
+                </columns>
+            </TableView>
+
+            <!-- Fila inferior: Botones -->
+            <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                <Button text="Guardar Tipo de Vacuna" onAction="#guardarTipoVacuna"/>
+                <Button text="Editar" onAction="#editarTipoVacuna"/>
+                <Button text="Eliminar" onAction="#eliminarTipoVacuna" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+            </HBox>
+        </VBox>
+    </TitledPane>
+</VBox>

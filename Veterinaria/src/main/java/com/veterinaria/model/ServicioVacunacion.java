@@ -30,4 +30,14 @@ public class ServicioVacunacion extends Servicio {
         this.tipoVacuna = tipoVacuna;
     }
 
+    @Override
+    public void validar() {
+        super.validar();
+        if (tipoVacuna == null) {
+            throw new IllegalArgumentException(
+                    "Un servicio de vacunación debe tener un tipo de vacuna asociado."
+            );
+        }
+    }
+
 }

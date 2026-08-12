@@ -6,6 +6,7 @@ import com.veterinaria.repository.ClienteRepository;
 import com.veterinaria.repository.EspecieRepository;
 import com.veterinaria.repository.MascotaRepository;
 import com.veterinaria.repository.RazaRepository;
+import com.veterinaria.util.TextoUtil;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -127,6 +128,10 @@ cmbEspecie.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, 
         colSexo.setCellValueFactory(new PropertyValueFactory<>("sexo"));
         colFechaNac.setCellValueFactory(new PropertyValueFactory<>("fechaNacimiento"));
 
+        // La última columna se estira para llenar el ancho (sin columna vacía)
+        tablaClientes.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+        tablaMascotas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+
         // Validaciones numéricas en tiempo real
         txtDni.textProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal.matches("\\d*")) txtDni.setText(newVal.replaceAll("[^\\d]", ""));
@@ -134,11 +139,17 @@ cmbEspecie.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, 
         txtTelefono.textProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal.matches("\\d*")) txtTelefono.setText(newVal.replaceAll("[^\\d]", ""));
         });
+        // Filtro en vivo: solo letras, espacios y caracteres acentuados.
+        // La capitalización se aplica al perder el foco (así no se traga
+        // los espacios mientras se escribe la siguiente palabra).
         txtNombre.textProperty().addListener((obs, oldValue, newValue) -> {
-        if (!newValue.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]*")) {
-            txtNombre.setText(newValue.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]", ""));
-        }
-    });
+            if (!newValue.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]*")) {
+                txtNombre.setText(newValue.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]", ""));
+            }
+        });
+        txtNombre.focusedProperty().addListener((obs, oldValue, focused) -> {
+            if (!focused) txtNombre.setText(TextoUtil.capitalizar(txtNombre.getText()));
+        });
 
     // Restringir Apellido a solo letras, espacios y caracteres acentuados
     txtApellido.textProperty().addListener((obs, oldValue, newValue) -> {
@@ -146,11 +157,26 @@ cmbEspecie.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, 
             txtApellido.setText(newValue.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]", ""));
         }
     });
+    txtApellido.focusedProperty().addListener((obs, oldValue, focused) -> {
+        if (!focused) txtApellido.setText(TextoUtil.capitalizar(txtApellido.getText()));
+    });
 
     // Restringir Nombre de Mascota a solo letras, espacios y caracteres acentuados
     txtMascotaNombre.textProperty().addListener((obs, oldValue, newValue) -> {
         if (!newValue.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]*")) {
             txtMascotaNombre.setText(newValue.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]", ""));
+        }
+    });
+    txtMascotaNombre.focusedProperty().addListener((obs, oldValue, focused) -> {
+        if (!focused) txtMascotaNombre.setText(TextoUtil.capitalizar(txtMascotaNombre.getText()));
+    });
+
+    // La fecha de nacimiento no puede ser posterior a hoy
+    dpFechaNacimiento.setDayCellFactory(param -> new DateCell() {
+        @Override
+        public void updateItem(LocalDate item, boolean empty) {
+            super.updateItem(item, empty);
+            setDisable(!empty && item.isAfter(LocalDate.now()));
         }
     });
 
@@ -271,15 +297,7 @@ cmbEspecie.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, 
             return;
         }
 
-        if (txtMascotaNombre.getText().trim().isEmpty() || 
-            cmbSexo.getValue() == null || 
-            cmbEspecie.getValue() == null ||
-            cmbRaza.getValue() == null || 
-            dpFechaNacimiento.getValue() == null) {
-            
-            mostrarAlerta("Atención", "Todos los campos de la mascota son obligatorios.");
-            return;
-        }
+        if (!validarCamposMascota()) return;
 
         try {
             Mascota nueva = new Mascota();
@@ -349,15 +367,7 @@ public void editarMascota() {
         return;
     }
 
-    if (txtMascotaNombre.getText().trim().isEmpty() || 
-        cmbSexo.getValue() == null || 
-        cmbEspecie.getValue() == null ||
-        cmbRaza.getValue() == null || 
-        dpFechaNacimiento.getValue() == null) {
-        
-        mostrarAlerta("Atención", "Todos los campos de la mascota son obligatorios.");
-        return;
-    }
+    if (!validarCamposMascota()) return;
 
     Cliente clienteSeleccionado = tablaClientes.getSelectionModel().getSelectedItem();
 
@@ -401,6 +411,25 @@ public void editarMascota() {
 
         if (txtDni.getText().trim().length() < 7) {
             mostrarAlerta("Atención", "El DNI ingresado no es válido (debe tener al menos 7 dígitos).");
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validarCamposMascota() {
+        if (txtMascotaNombre.getText().trim().isEmpty() ||
+                cmbSexo.getValue() == null ||
+                cmbEspecie.getValue() == null ||
+                cmbRaza.getValue() == null ||
+                dpFechaNacimiento.getValue() == null) {
+
+            mostrarAlerta("Atención", "Todos los campos de la mascota son obligatorios.");
+            return false;
+        }
+
+        if (dpFechaNacimiento.getValue().isAfter(LocalDate.now())) {
+            mostrarAlerta("Atención", "La fecha de nacimiento no puede ser posterior a la fecha actual.");
             return false;
         }
 

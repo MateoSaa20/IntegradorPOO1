@@ -16,4 +16,18 @@ public class VeterinarioRepository extends BaseRepository<Veterinario, Long> {
                  .getResultStream()
                  .findFirst();
     }
+
+    /**
+     * Regla de negocio: un veterinario que tiene turnos asignados no puede
+     * eliminarse porque los turnos conservan su referencia histórica.
+     */
+    public boolean tieneTurnos(Long idVeterinario) {
+        Long cantidad = em.createQuery(
+                "SELECT COUNT(t) FROM Turno t WHERE t.veterinario.id = :idVeterinario",
+                Long.class)
+                .setParameter("idVeterinario", idVeterinario)
+                .getSingleResult();
+
+        return cantidad != null && cantidad > 0;
+    }
 }
