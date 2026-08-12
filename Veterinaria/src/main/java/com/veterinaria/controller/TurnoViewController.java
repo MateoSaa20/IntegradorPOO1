@@ -43,12 +43,11 @@ public class TurnoViewController {
     @FXML private TableColumn<Turno, EstadoTurno> colEstado;
     @FXML private TableColumn<Turno, String> colDuracion;
     @FXML private TableColumn<Turno, String> colPrecioTotal;
-    @FXML private ComboBox<Servicio> cmbServicio;
     @FXML private TableColumn<Turno, String> colServicios;
+    
     @FXML private ListView<ServicioSelection> listServicios;
     @FXML private Label lblPrecioTotal;
 
-    
     private ServicioRepository servicioRepository;
     private TurnoController turnoController;
     private ClienteRepository clienteRepository;
@@ -58,8 +57,7 @@ public class TurnoViewController {
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-
-   @FXML
+    @FXML
     public void initialize() {
         EntityManager em = JpaUtil.getEntityManager();
         turnoController = new TurnoController(em);
@@ -100,7 +98,7 @@ public class TurnoViewController {
         cmbCliente.setItems(FXCollections.observableArrayList(clienteRepository.buscarTodos()));
         cmbVeterinario.setItems(FXCollections.observableArrayList(veterinarioRepository.buscarTodos()));
 
-        // 4. Listener para cargar las Mascotas del Cliente seleccionado y validar fecha de nacimiento
+        // 4. Listener para cargar las Mascotas del Cliente seleccionado
         cmbCliente.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, cliente) -> {
             if (cliente != null) {
                 try {
@@ -130,7 +128,7 @@ public class TurnoViewController {
                         super.updateItem(date, empty);
                         if (date.isBefore(mascota.getFechaNacimiento())) {
                             setDisable(true);
-                            setStyle("-fx-background-color: #ffc0cb;"); // Resalta días inválidos
+                            setStyle("-fx-background-color: #ffc0cb;");
                         }
                     }
                 });
@@ -145,11 +143,7 @@ public class TurnoViewController {
         cargarTurnos();
     }
 
-/**
- * Define el formato visual en pantalla de los objetos dentro de los desplegables.
- */
     private void configurarFormatoCombos() {
-        // Formato para Cliente: "DNI - Nombre Apellido"
         cmbCliente.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(Cliente cliente, boolean empty) {
@@ -159,7 +153,6 @@ public class TurnoViewController {
         });
         cmbCliente.setButtonCell(cmbCliente.getCellFactory().call(null));
 
-        // Formato para Mascota: "Nombre (Raza)"
         cmbMascota.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(Mascota mascota, boolean empty) {
@@ -174,8 +167,6 @@ public class TurnoViewController {
         });
         cmbMascota.setButtonCell(cmbMascota.getCellFactory().call(null));
 
-        // 💡 AGREGAR ESTE BLOQUE: Formato para Veterinario "Mat. [Matricula] - [Nombre]"
-        // Formato para Veterinario: "Mat. [Matricula] - [Nombre] [Apellido]"
         cmbVeterinario.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(Veterinario vet, boolean empty) {
@@ -192,26 +183,19 @@ public class TurnoViewController {
 
     private void cargarTurnos() {
         EntityManager em = JpaUtil.getEntityManager();
-        // Volvemos a instanciar el controller con una sesión limpia para asegurar la relectura
         turnoController = new TurnoController(em);
-        
         List<Turno> lista = turnoController.listarTurnos();
-        
-        // Print de depuración para ver en consola cuántos turnos encuentra
-        System.out.println(">>> TURNOS CARGADOS DESDE BD: " + lista.size());
-        
         tablaTurnos.setItems(FXCollections.observableArrayList(lista));
-        tablaTurnos.refresh();// Forzamos a repintar la vista    }
+        tablaTurnos.refresh();
     }
 
-   @FXML
+    @FXML
     public void agendarTurno() {
         if (!validarCampos()) return;
         
         Mascota mascotaSeleccionada = cmbMascota.getValue();
         LocalDate fechaTurno = dpFecha.getValue();
 
-        // Validación: Fecha del turno no anterior al nacimiento
         if (mascotaSeleccionada != null && mascotaSeleccionada.getFechaNacimiento() != null) {
             if (fechaTurno.isBefore(mascotaSeleccionada.getFechaNacimiento())) {
                 mostrarAlerta(
@@ -220,7 +204,7 @@ public class TurnoViewController {
                     ") no puede ser anterior a la fecha de nacimiento de la mascota (" + 
                     mascotaSeleccionada.getFechaNacimiento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + ")."
                 );
-                return; // Cortamos la ejecución antes de guardar
+                return;
             }
         }
 
@@ -235,14 +219,16 @@ public class TurnoViewController {
                 mascotaSeleccionada
             );
 
-            // 💡 REGLA DE NEGOCIO: Crear e incorporar el ItemTurno con el Servicio seleccionado
-            Servicio servicioSeleccionado = cmbServicio.getValue();
-            if (servicioSeleccionado != null) {
-                ItemTurno item = new ItemTurno(servicioSeleccionado, nuevo);
-                nuevo.agregarItem(item); // Asocia el ítem congelando el precio y la duración actual
+            // 💡 REGLA DE NEGOCIO: Crear un ItemTurno por CADA servicio seleccionado en la lista
+            List<ServicioSelection> seleccionados = listaServiciosSeleccionables.stream()
+                    .filter(ServicioSelection::isSelected)
+                    .toList();
+
+            for (ServicioSelection sel : seleccionados) {
+                ItemTurno item = new ItemTurno(sel.getServicio(), nuevo);
+                nuevo.agregarItem(item);
             }
 
-            // Persistir mediante el controlador de backend
             turnoController.agendarTurno(nuevo);
 
             cargarTurnos();
@@ -250,7 +236,7 @@ public class TurnoViewController {
             mostrarAlerta("Éxito", "Turno agendado correctamente.");
 
         } catch (Exception e) {
-        mostrarAlerta("Error al agendar", e.getMessage());
+            mostrarAlerta("Error al agendar", e.getMessage());
         }
     }   
 
@@ -328,12 +314,14 @@ public class TurnoViewController {
     }
 
     private boolean validarCampos() {
+        boolean hayServiciosSeleccionados = listaServiciosSeleccionables.stream().anyMatch(ServicioSelection::isSelected);
+
         if (cmbCliente.getValue() == null || cmbMascota.getValue() == null ||
             cmbVeterinario.getValue() == null || dpFecha.getValue() == null || 
             txtHora.getText().trim().isEmpty() || cmbEstado.getValue() == null ||
-             cmbServicio.getValue() == null) {
+            !hayServiciosSeleccionados) {
 
-            mostrarAlerta("Atención", "Por favor, complete todos los campos requeridos.");
+            mostrarAlerta("Atención", "Por favor, complete todos los campos requeridos y seleccione al menos un servicio.");
             return false;
         }
 
@@ -355,6 +343,11 @@ public class TurnoViewController {
         dpFecha.setValue(null);
         txtHora.clear();
         cmbEstado.setValue(EstadoTurno.PENDIENTE);
+        
+        // Desmarcar todos los servicios del ListView
+        listaServiciosSeleccionables.forEach(s -> s.setSelected(false));
+        recalcularMontoTotal();
+
         tablaTurnos.getSelectionModel().clearSelection();
     }
 
@@ -367,23 +360,19 @@ public class TurnoViewController {
     }
     
     private void configurarColumnasTabla() {
-    // ID Turno y Estado
         colId.setCellValueFactory(new PropertyValueFactory<>("idTurno"));
         colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
 
-        // Fecha y Hora formateada (ejemplo: 10/08/2026 09:30)
         colFechaHora.setCellValueFactory(cellData -> {
             LocalDateTime fh = cellData.getValue().getFechaHora();
             return new SimpleStringProperty(fh != null ? fh.format(dateTimeFormatter) : "");
         });
 
-        // Nombre de la Mascota
         colMascota.setCellValueFactory(cellData -> {
             Mascota m = cellData.getValue().getMascota();
             return new SimpleStringProperty(m != null ? m.getNombre() : "");
         });
 
-        // Nombre y Apellido del Cliente (dueño de la mascota)
         colCliente.setCellValueFactory(cellData -> {
             Mascota m = cellData.getValue().getMascota();
             if (m != null && m.getCliente() != null) {
@@ -392,7 +381,6 @@ public class TurnoViewController {
             return new SimpleStringProperty("");
         });
 
-        // Datos del Veterinario (Matrícula y Nombre)
         colVeterinario.setCellValueFactory(cellData -> {
             Veterinario v = cellData.getValue().getVeterinario();
             if (v != null) {
@@ -401,24 +389,17 @@ public class TurnoViewController {
             return new SimpleStringProperty("");
         });
 
-        // Tiempo total sumado de sus ItemTurno
         colDuracion.setCellValueFactory(cellData -> {
-            Turno t = cellData.getValue();
             int mins = cellData.getValue().calcularTiempoTotal();
             return new SimpleStringProperty(mins + " min");
         });
 
-        // Precio total sumado de sus ItemTurno
         colPrecioTotal.setCellValueFactory(cellData -> {
-            Turno t = cellData.getValue();
             double total = cellData.getValue().calcularPrecioTotal();
             return new SimpleStringProperty(String.format("$ %.2f", total));
         });
     }
 
-
-
-    // Método que recalcula el total de los ítems tildados
     private void recalcularMontoTotal() {
         double total = listaServiciosSeleccionables.stream()
                 .filter(ServicioSelection::isSelected)
@@ -430,7 +411,6 @@ public class TurnoViewController {
         }
     }
 
-    // Clase auxiliar Wrapper para la selección en la interfaz
     public static class ServicioSelection {
         private final Servicio servicio;
         private final BooleanProperty selected = new SimpleBooleanProperty(false);
@@ -452,5 +432,4 @@ public class TurnoViewController {
                     servicio.getNombre(), servicio.getPrecio(), servicio.getDuracionMinutos());
         }
     }
-
 }
