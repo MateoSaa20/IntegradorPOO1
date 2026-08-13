@@ -5,10 +5,10 @@
 
 <VBox spacing="12.0" xmlns="http://javafx.com/fxml/1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.veterinaria.controller.VacunacionViewController"
-      style="-fx-padding: 15;">
+      styleClass="view">
 
-    <Label text="Control de Vacunaciones" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-    <Label text="Mascotas con vacunas vencidas o por vencer (dentro del mes de aviso)" style="-fx-text-fill: #2c3e50;"/>
+    <Label text="Control de Vacunaciones" styleClass="page-title"/>
+    <Label text="Mascotas con vacunas vencidas o por vencer (dentro del mes de aviso)" styleClass="text-muted"/>
 
     <TableView fx:id="tablaAlertas" prefHeight="300.0">
         <columns>
@@ -30,8 +30,8 @@
 
     <!-- Formulario de registro (se muestra al presionar el botón) -->
     <VBox fx:id="panelFormulario" spacing="10.0" visible="false" managed="false"
-          style="-fx-border-color: #bdc3c7; -fx-border-radius: 5; -fx-padding: 12;">
-        <Label text="Registrar nueva vacunación" style="-fx-font-weight: bold;"/>
+          styleClass="panel">
+        <Label text="Registrar nueva vacunación" styleClass="section-title"/>
         <HBox spacing="10.0" alignment="CENTER_LEFT">
             <Label text="Mascota:"/>
             <ComboBox fx:id="cmbMascota" prefWidth="240.0"/>
@@ -53,7 +53,7 @@
             <TextField fx:id="txtObservacionesDosis" prefWidth="280.0" promptText="Ej: Refuerzo anual"/>
         </HBox>
         <HBox spacing="10.0">
-            <Button text="Registrar" onAction="#registrar" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+            <Button text="Registrar" onAction="#registrar" styleClass="btn-success"/>
             <Button text="Cancelar" onAction="#ocultarFormulario"/>
         </HBox>
     </VBox>

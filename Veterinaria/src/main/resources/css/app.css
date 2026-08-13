@@ -1,0 +1,339 @@
+/* ==========================================================
+   TEMA NATURAL / VERDE - Sistema Veterinaria
+   ========================================================== */
+
+/* ---- Base ---- */
+.root {
+    -fx-background-color: #F7F3E8;
+}
+
+.label {
+    -fx-text-fill: #4A5D46;
+}
+
+/* ---- Contenedores de vista ---- */
+.view {
+    -fx-padding: 15;
+}
+
+.content {
+    -fx-padding: 20;
+}
+
+.welcome {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3E5C3B;
+}
+
+/* ---- Sidebar ---- */
+.sidebar {
+    -fx-background-color: #2E4B35;
+    -fx-padding: 20;
+}
+
+.sidebar-title {
+    -fx-text-fill: #F7F3E8;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.sidebar-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: #E8E4D4;
+    -fx-font-size: 13px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-radius: 6;
+    -fx-padding: 8 12 8 12;
+}
+
+.sidebar-item:hover {
+    -fx-background-color: #3D6348;
+    -fx-text-fill: #FFFFFF;
+}
+
+.sidebar-item:pressed {
+    -fx-background-color: #4E7A5F;
+}
+
+.separator .line {
+    -fx-border-color: #4E7A5F;
+    -fx-border-width: 1;
+}
+
+/* ---- Títulos ---- */
+.page-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3E5C3B;
+}
+
+.section-title {
+    -fx-font-weight: bold;
+    -fx-text-fill: #3E5C3B;
+}
+
+.text-muted {
+    -fx-text-fill: #7A8468;
+}
+
+/* ---- TitledPane ---- */
+.titled-pane {
+    -fx-text-fill: #3E5C3B;
+}
+
+.titled-pane > .title {
+    -fx-background-color: #DEE3D2;
+    -fx-background-radius: 8 8 0 0;
+    -fx-padding: 8 12 8 12;
+    -fx-font-weight: bold;
+}
+
+.titled-pane > .title .arrow-button .arrow {
+    -fx-background-color: #4A5D46;
+}
+
+.titled-pane > .content {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #DCD3C0;
+    -fx-border-radius: 0 0 8 8;
+    -fx-background-radius: 0 0 8 8;
+    -fx-padding: 12;
+}
+
+/* ---- TabPane ---- */
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #E5DEC9;
+}
+
+.tab-pane .tab {
+    -fx-background-color: #EDE7D7;
+    -fx-background-radius: 8 8 0 0;
+    -fx-padding: 4 16 4 16;
+}
+
+.tab-pane .tab .tab-label {
+    -fx-text-fill: #4A5D46;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: #6B8E4E;
+}
+
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+.tab-pane > .tab-content-area {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #DCD3C0;
+    -fx-border-width: 0 1 1 1;
+}
+
+/* ---- Botones ---- */
+.button {
+    -fx-background-color: #6B8E4E;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 6 14 6 14;
+}
+
+.button:hover {
+    -fx-background-color: #5A7A40;
+}
+
+.button:pressed {
+    -fx-background-color: #4D6936;
+}
+
+.button:disabled {
+    -fx-background-color: #C9C4B4;
+    -fx-text-fill: #F4F0E3;
+}
+
+.button.btn-danger {
+    -fx-background-color: #A94442;
+}
+
+.button.btn-danger:hover {
+    -fx-background-color: #8F3836;
+}
+
+.button.btn-success {
+    -fx-background-color: #27AE60;
+}
+
+.button.btn-success:hover {
+    -fx-background-color: #219A52;
+}
+
+/* ---- Campos ---- */
+.text-field {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #C9BE9E;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.text-field:focused {
+    -fx-border-color: #6B8E4E;
+}
+
+.text-area {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #C9BE9E;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.text-area:focused {
+    -fx-border-color: #6B8E4E;
+}
+
+.text-area .content {
+    -fx-background-color: #FFFFFF;
+}
+
+.combo-box {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #C9BE9E;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.combo-box:focused {
+    -fx-border-color: #6B8E4E;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #4A5D46;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: #E5DEC9;
+    -fx-background-radius: 0 4 4 0;
+}
+
+.combo-box .arrow-button .arrow {
+    -fx-background-color: #3E5C3B;
+}
+
+.date-picker {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #C9BE9E;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.date-picker:focused {
+    -fx-border-color: #6B8E4E;
+}
+
+.date-picker .text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.date-picker .arrow-button {
+    -fx-background-color: #E5DEC9;
+    -fx-background-radius: 0 4 4 0;
+}
+
+.date-picker .arrow-button .arrow {
+    -fx-background-color: #3E5C3B;
+}
+
+.check-box .box {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #C9BE9E;
+    -fx-border-radius: 3;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #6B8E4E;
+    -fx-border-color: #6B8E4E;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: #FFFFFF;
+}
+
+/* ---- Tablas ---- */
+.table-view {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #DCD3C0;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #6B8E4E;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 32;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.table-row-cell {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent transparent #F0EBDD transparent;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #F7F3E8;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #EDF0E3;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #D9E3CB;
+}
+
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: #2E4B35;
+}
+
+.table-view .cell {
+    -fx-text-fill: #4A5D46;
+}
+
+.table-view .table-column {
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* ---- Mensajes y paneles ---- */
+.alert-banner {
+    -fx-background-color: #FBEDE8;
+    -fx-text-fill: #A94442;
+    -fx-padding: 8;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-border-color: #E5C4B8;
+    -fx-border-radius: 6;
+}
+
+.message-error {
+    -fx-text-fill: #A94442;
+}
+
+.panel {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #C9BE9E;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 12;
+}

@@ -5,9 +5,9 @@
 
 <VBox spacing="12.0" xmlns="http://javafx.com/fxml/1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.veterinaria.controller.AtencionViewController"
-      style="-fx-padding: 15;">
+      styleClass="view">
 
-    <Label text="Atención de Turnos" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    <Label text="Atención de Turnos" styleClass="page-title"/>
 
     <!-- Tabla superior: turnos CONFIRMADO listos para atender -->
     <TitledPane text="Turnos Confirmados" animated="false">
@@ -40,7 +40,7 @@
     <TitledPane text="Detalle del Servicio" animated="false">
         <VBox spacing="10.0">
             <HBox spacing="6.0" alignment="CENTER_LEFT">
-                <Label text="Servicio:" style="-fx-font-weight: bold;"/>
+                <Label text="Servicio:" styleClass="section-title"/>
                 <Label fx:id="lblServicioDetalle" text="(seleccione un servicio)"/>
             </HBox>
 
@@ -76,20 +76,20 @@
             <VBox fx:id="boxVacuna" spacing="8.0" visible="false" managed="false">
                 <HBox spacing="6.0" alignment="CENTER_LEFT">
                     <Label text="Tipo de vacuna:"/>
-                    <Label fx:id="lblTipoVacuna" text="" style="-fx-font-weight: bold;"/>
+                    <Label fx:id="lblTipoVacuna" text="" styleClass="section-title"/>
                 </HBox>
                 <TextField fx:id="txtLaboratorio" prefWidth="320.0" promptText="Laboratorio / Marca"/>
                 <TextField fx:id="txtObservacionesDosis" prefWidth="420.0" promptText="Observaciones de la dosis (ej: 1ra dosis, refuerzo a los 21 días)"/>
             </VBox>
 
             <!-- Mensaje de validación de contenido mínimo -->
-            <Label fx:id="lblMensaje" text="" wrapText="true" style="-fx-text-fill: #c0392b;"/>
+            <Label fx:id="lblMensaje" text="" wrapText="true" styleClass="message-error"/>
         </VBox>
     </TitledPane>
 
     <!-- Botones -->
     <HBox spacing="10.0" alignment="CENTER_RIGHT">
         <Button text="Guardar Detalles" onAction="#guardarDetalles"/>
-        <Button text="Atender Turno" onAction="#atenderTurno" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+        <Button text="Atender Turno" onAction="#atenderTurno" styleClass="btn-success"/>
     </HBox>
 </VBox>

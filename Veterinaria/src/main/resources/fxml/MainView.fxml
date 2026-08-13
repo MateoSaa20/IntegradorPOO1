@@ -9,25 +9,25 @@
     
     <!-- MENÚ LATERAL IZQUIERDO -->
     <left>
-        <VBox spacing="15.0" style="-fx-background-color: #2c3e50; -fx-padding: 20;">
-            <Label text="VETERINARIA" style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <VBox spacing="15.0" styleClass="sidebar">
+            <Label text="VETERINARIA" styleClass="sidebar-title"/>
             <Separator />
-            <Button text="Clientes y Mascotas" onAction="#mostrarClientes" maxWidth="17976931348623157e308"/>
-            <Button text="Gestión de Turnos" onAction="#mostrarTurnos" maxWidth="17976931348623157e308"/>
-            <Button text="Atención de Turnos" onAction="#mostrarAtencion" maxWidth="17976931348623157e308"/>
-            <Button text="Historial y Vacunas" onAction="#mostrarHistorial" maxWidth="17976931348623157e308"/>
-            <Button text="Control de Vacunaciones" onAction="#mostrarVacunaciones" maxWidth="17976931348623157e308"/>
+            <Button text="Clientes y Mascotas" onAction="#mostrarClientes" maxWidth="17976931348623157e308" styleClass="sidebar-item"/>
+            <Button text="Gestión de Turnos" onAction="#mostrarTurnos" maxWidth="17976931348623157e308" styleClass="sidebar-item"/>
+            <Button text="Atención de Turnos" onAction="#mostrarAtencion" maxWidth="17976931348623157e308" styleClass="sidebar-item"/>
+            <Button text="Historial y Vacunas" onAction="#mostrarHistorial" maxWidth="17976931348623157e308" styleClass="sidebar-item"/>
+            <Button text="Control de Vacunaciones" onAction="#mostrarVacunaciones" maxWidth="17976931348623157e308" styleClass="sidebar-item"/>
             <Separator />
-            <Button text="Servicios" onAction="#mostrarServicios" maxWidth="17976931348623157e308"/>
-            <Button text="Tipos de Vacuna" onAction="#mostrarTipoVacunas" maxWidth="17976931348623157e308"/>
-            <Button text="Veterinarios" onAction="#mostrarVeterinarios" maxWidth="17976931348623157e308"/>
+            <Button text="Servicios" onAction="#mostrarServicios" maxWidth="17976931348623157e308" styleClass="sidebar-item"/>
+            <Button text="Tipos de Vacuna" onAction="#mostrarTipoVacunas" maxWidth="17976931348623157e308" styleClass="sidebar-item"/>
+            <Button text="Veterinarios" onAction="#mostrarVeterinarios" maxWidth="17976931348623157e308" styleClass="sidebar-item"/>
         </VBox>
     </left>
 
     <!-- ÁREA CENTRAL DONDE SE CAMBIAN LAS PANTALLAS -->
     <center>
-        <StackPane fx:id="contentArea" style="-fx-padding: 20;">
-            <Label text="Bienvenido al Sistema de Gestión Veterinaria" style="-fx-font-size: 20px;"/>
+        <StackPane fx:id="contentArea" styleClass="content">
+            <Label text="Bienvenido al Sistema de Gestión Veterinaria" styleClass="welcome"/>
         </StackPane>
     </center>
 </BorderPane>

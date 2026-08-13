@@ -5,16 +5,16 @@
 
 <VBox spacing="12.0" xmlns="http://javafx.com/fxml/1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.veterinaria.controller.HistorialViewController"
-      style="-fx-padding: 15;">
+      styleClass="view">
 
-    <Label text="Historial y Vacunas" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    <Label text="Historial y Vacunas" styleClass="page-title"/>
 
     <!-- Búsqueda por DNI del dueño -->
     <HBox spacing="10.0" alignment="CENTER_LEFT">
         <Label text="DNI del dueño:"/>
         <TextField fx:id="txtDni" prefWidth="160.0" promptText="Ej: 30123456"/>
         <Button text="Buscar" onAction="#buscarCliente"/>
-        <Label fx:id="lblCliente" style="-fx-text-fill: #2c3e50;"/>
+        <Label fx:id="lblCliente" styleClass="text-muted"/>
     </HBox>
 
     <!-- Selección de mascota -->
@@ -25,7 +25,7 @@
 
     <!-- Banner de alerta (vacunas por vencer) -->
     <Label fx:id="lblAviso" wrapText="true" visible="false" managed="false"
-           style="-fx-background-color: #fdecea; -fx-text-fill: #c0392b; -fx-padding: 8; -fx-font-weight: bold;"/>
+           styleClass="alert-banner"/>
 
     <TabPane>
         <Tab text="Atenciones" closable="false">
@@ -40,7 +40,7 @@
         </Tab>
         <Tab text="Vacunas" closable="false">
             <VBox spacing="10.0" style="-fx-padding: 10;">
-                <Label text="Estado de vacunas" style="-fx-font-weight: bold;"/>
+                <Label text="Estado de vacunas" styleClass="section-title"/>
                 <TableView fx:id="tablaEstadoVacunas" prefHeight="180.0">
                     <columns>
                         <TableColumn fx:id="colEstVacuna" text="Vacuna" prefWidth="160.0"/>
@@ -51,7 +51,7 @@
                         <TableColumn fx:id="colEstEstado" text="Estado" prefWidth="100.0"/>
                     </columns>
                 </TableView>
-                <Label text="Aplicaciones registradas" style="-fx-font-weight: bold;"/>
+                <Label text="Aplicaciones registradas" styleClass="section-title"/>
                 <TableView fx:id="tablaAplicaciones" prefHeight="180.0">
                     <columns>
                         <TableColumn fx:id="colAplFecha" text="Fecha" prefWidth="140.0"/>

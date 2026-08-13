@@ -5,9 +5,9 @@
 
 <VBox spacing="15.0" xmlns="http://javafx.com/fxml/1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.veterinaria.controller.ServicioViewController"
-      style="-fx-padding: 15;">
+      styleClass="view">
 
-    <Label text="Gestión de Servicios" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    <Label text="Gestión de Servicios" styleClass="page-title"/>
 
     <TitledPane text="Servicios" animated="false">
         <VBox spacing="10.0">
@@ -60,7 +60,7 @@
             <HBox spacing="10.0" alignment="CENTER_RIGHT">
                 <Button text="Guardar Servicio" onAction="#guardarServicio"/>
                 <Button text="Editar Servicio" onAction="#editarServicio"/>
-                <Button text="Eliminar Servicio" onAction="#eliminarServicio" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+                <Button text="Eliminar Servicio" onAction="#eliminarServicio" styleClass="btn-danger"/>
             </HBox>
         </VBox>
     </TitledPane>

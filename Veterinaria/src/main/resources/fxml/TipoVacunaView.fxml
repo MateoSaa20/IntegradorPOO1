@@ -5,9 +5,9 @@
 
 <VBox spacing="15.0" xmlns="http://javafx.com/fxml/1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.veterinaria.controller.TipoVacunaViewController"
-      style="-fx-padding: 15;">
+      styleClass="view">
 
-    <Label text="Tipos de Vacuna" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    <Label text="Tipos de Vacuna" styleClass="page-title"/>
 
     <TitledPane text="Carga de Tipos de Vacuna" animated="false">
         <VBox spacing="10.0">
@@ -47,7 +47,7 @@
             <HBox spacing="10.0" alignment="CENTER_RIGHT">
                 <Button text="Guardar Tipo de Vacuna" onAction="#guardarTipoVacuna"/>
                 <Button text="Editar" onAction="#editarTipoVacuna"/>
-                <Button text="Eliminar" onAction="#eliminarTipoVacuna" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+                <Button text="Eliminar" onAction="#eliminarTipoVacuna" styleClass="btn-danger"/>
             </HBox>
         </VBox>
     </TitledPane>

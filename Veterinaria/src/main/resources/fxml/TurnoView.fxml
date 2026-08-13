@@ -6,9 +6,9 @@
 
 <VBox spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.veterinaria.controller.TurnoViewController"
-      style="-fx-padding: 15;">
+      styleClass="view">
 
-    <Label text="Gestión de Turnos Médicos" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    <Label text="Gestión de Turnos Médicos" styleClass="page-title"/>
 
     <TitledPane text="Agendar Nuevo Turno" animated="false">
         <VBox spacing="12.0">
@@ -18,7 +18,7 @@
                     <Label text="DNI Dueño:"/>
                     <TextField fx:id="txtDniCliente" prefWidth="100.0" promptText="30.123.456"/>
                     <Button text="Buscar" onAction="#buscarCliente"/>
-                    <Label fx:id="lblClienteEncontrado" text="" style="-fx-text-fill: gray;"/>
+                    <Label fx:id="lblClienteEncontrado" text="" styleClass="text-muted"/>
                 </HBox>
 
                 <HBox spacing="5.0" alignment="CENTER_LEFT">
@@ -34,7 +34,7 @@
 
             <!-- Fila 2: Tabla de Selección de Servicios -->
             <VBox spacing="5.0">
-                <Label text="Seleccionar Servicios:" style="-fx-font-weight: bold;"/>
+                <Label text="Seleccionar Servicios:" styleClass="section-title"/>
                 <TableView fx:id="tablaSeleccionServicios" prefHeight="130.0" editable="true">
                     <columns>
                         <TableColumn fx:id="colServicioIncluir" text="Incluir" prefWidth="60.0"/>
@@ -76,7 +76,7 @@
                 </HBox>
 
                 <HBox spacing="10.0" alignment="CENTER_LEFT">
-                    <Label text="Total Estimado:" style="-fx-font-weight: bold;"/>
+                    <Label text="Total Estimado:" styleClass="section-title"/>
                     <Label fx:id="lblPrecioTotal" text="0.00"/>    
                 </HBox>
             </HBox>

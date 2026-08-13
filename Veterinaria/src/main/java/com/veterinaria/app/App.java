@@ -20,6 +20,10 @@ public class App extends Application {
 
         Scene scene = new Scene(root, 1024, 680);
 
+        scene.getStylesheets().add(
+                getClass().getResource("/css/app.css").toExternalForm()
+        );
+
         primaryStage.setTitle("Sistema de Gestión Veterinaria");
         primaryStage.setScene(scene);
         primaryStage.show();
