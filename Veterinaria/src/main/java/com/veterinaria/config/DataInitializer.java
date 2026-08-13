@@ -1,16 +1,24 @@
 package com.veterinaria.config;
 
 import com.veterinaria.model.Cliente;
+import com.veterinaria.model.DetalleAtencion;
+import com.veterinaria.model.DetalleConsulta;
+import com.veterinaria.model.DetalleVacunacion;
 import com.veterinaria.model.Especialidad;
 import com.veterinaria.model.Especie;
+import com.veterinaria.model.EstadoTurno;
+import com.veterinaria.model.ItemTurno;
 import com.veterinaria.model.Mascota;
 import com.veterinaria.model.Raza;
+import com.veterinaria.model.Servicio;
 import com.veterinaria.model.ServicioConsulta;
 import com.veterinaria.model.ServicioGuarderia;
 import com.veterinaria.model.ServicioPeluqueria;
 import com.veterinaria.model.ServicioVacunacion;
 import com.veterinaria.model.Sexo;
 import com.veterinaria.model.TipoVacuna;
+import com.veterinaria.model.Tratamiento;
+import com.veterinaria.model.Turno;
 import com.veterinaria.model.Veterinario;
 import jakarta.persistence.EntityManager;
 
@@ -31,6 +39,7 @@ public class DataInitializer {
         cargarEspecialidadesYVeterinarios(em);
         cargarTiposDeVacunaYServicios(em);
         cargarClientesYMascotas(em);
+        cargarTurnosYVacunasEjemplo(em);
     }
 
     // ==========================================================
@@ -128,12 +137,14 @@ public class DataInitializer {
             TipoVacuna antirrabica = new TipoVacuna(
                     "Rabisin",
                     "Rabia",
-                    12
+                    12,
+                    true
             );
             TipoVacuna quintuple = new TipoVacuna(
                     "Nobivac DHPPi",
                     "Moquillo, Parvovirus, Hepatitis, Leptospirosis",
-                    12
+                    12,
+                    true
             );
             em.persist(antirrabica);
             em.persist(quintuple);
@@ -202,7 +213,7 @@ public class DataInitializer {
             Cliente maria = new Cliente(
                     "María",
                     "González",
-                    "30.123.456",
+                    "30123456",
                     "11-5555-1234"
             );
             em.persist(maria);
@@ -225,7 +236,7 @@ public class DataInitializer {
             Cliente pedro = new Cliente(
                     "Pedro",
                     "López",
-                    "28.987.654",
+                    "28987654",
                     "11-5555-9876"
             );
             em.persist(pedro);
@@ -250,6 +261,156 @@ public class DataInitializer {
     }
 
     // ==========================================================
+    // TURNOS Y VACUNAS DE EJEMPLO (para visualizar el historial)
+    // ==========================================================
+
+    private static void cargarTurnosYVacunasEjemplo(EntityManager em) {
+        if (hayDatos(em, "SELECT COUNT(t) FROM Turno t")) {
+            return;
+        }
+
+        em.getTransaction().begin();
+        try {
+            TipoVacuna antirrabica = tipoVacunaPorNombre(em, "Rabisin");
+            TipoVacuna quintuple = tipoVacunaPorNombre(em, "Nobivac DHPPi");
+
+            ServicioVacunacion servAntirrabica =
+                    (ServicioVacunacion) servicioPorNombre(em, "Vacuna Antirrábica");
+            ServicioVacunacion servQuintuple =
+                    (ServicioVacunacion) servicioPorNombre(em, "Vacuna Quíntuple");
+            ServicioPeluqueria peluqueria =
+                    (ServicioPeluqueria) servicioPorNombre(em, "Peluquería y Baño Completo");
+
+            Veterinario carlos = veterinarioPorNombre(em, "Carlos", "Gómez");
+            Veterinario laura = veterinarioPorNombre(em, "Laura", "Martínez");
+
+            Mascota rocky = mascotaPorNombre(em, "Rocky");
+            Mascota luna = mascotaPorNombre(em, "Luna");
+
+            LocalDate hoy = LocalDate.now();
+
+            // Rocky: antirrábica hace ~11 meses y medio -> la próxima cae en menos de 1 mes (alerta)
+            registrarVacunacion(em, rocky, carlos, servAntirrabica,
+                    hoy.minusMonths(11).minusDays(15), antirrabica,
+                    "Zoetis", "1ra dosis - refuerzo anual");
+            // Rocky: quíntuple hace ~3 meses -> al día
+            registrarVacunacion(em, rocky, laura, servQuintuple,
+                    hoy.minusMonths(3).minusDays(10), quintuple,
+                    "Nobivac", "Refuerzo anual");
+            // Rocky: una consulta con tratamiento para el historial
+            registrarConsulta(em, rocky, carlos, hoy.minusMonths(1).minusDays(2),
+                    "Control de rutina, buena salud general.",
+                    "Sano, sin patologías.",
+                    hoy.minusMonths(1),
+                    hoy.minusMonths(1).plusDays(7),
+                    "Antiparasitario oral");
+
+            // Luna: antirrábica hace ~4 meses -> al día
+            registrarVacunacion(em, luna, laura, servAntirrabica,
+                    hoy.minusMonths(4).minusDays(3), antirrabica,
+                    "Zoetis", "Refuerzo");
+            // Luna: quíntuple hace ~13 meses -> VENCIDA (alerta)
+            registrarVacunacion(em, luna, carlos, servQuintuple,
+                    hoy.minusMonths(13).minusDays(15), quintuple,
+                    "Nobivac", "1ra dosis");
+            // Luna: una peluquería en el historial
+            registrarServicioSimple(em, luna, carlos, peluqueria, hoy.minusDays(20),
+                    "Baño completo y corte sanitario.");
+
+            em.getTransaction().commit();
+            System.out.println("✅ Turnos y vacunas de ejemplo cargados correctamente.");
+        } catch (Exception e) {
+            deshacer(em, "Error al cargar turnos y vacunas de ejemplo.", e);
+        }
+    }
+
+    private static void registrarVacunacion(EntityManager em,
+                                            Mascota mascota,
+                                            Veterinario veterinario,
+                                            ServicioVacunacion servicio,
+                                            LocalDate fechaAplicacion,
+                                            TipoVacuna tipoVacuna,
+                                            String laboratorio,
+                                            String observacionesDosis) {
+
+        Turno turno = new Turno(
+                fechaAplicacion.atTime(10, 0),
+                EstadoTurno.ATENDIDO,
+                veterinario,
+                mascota
+        );
+
+        ItemTurno item = new ItemTurno(servicio, turno);
+        DetalleVacunacion detalle = new DetalleVacunacion(
+                tipoVacuna,
+                laboratorio,
+                observacionesDosis
+        );
+        detalle.setObservaciones(
+                "Vacunación " + tipoVacuna.getNombreComercial()
+        );
+        item.setDetalleAtencion(detalle);
+        turno.agregarItem(item);
+
+        em.persist(turno);
+    }
+
+    private static void registrarConsulta(EntityManager em,
+                                          Mascota mascota,
+                                          Veterinario veterinario,
+                                          LocalDate fecha,
+                                          String observaciones,
+                                          String diagnostico,
+                                          LocalDate inicioTratamiento,
+                                          LocalDate finTratamiento,
+                                          String descripcionTratamiento) {
+
+        Turno turno = new Turno(
+                fecha.atTime(9, 30),
+                EstadoTurno.ATENDIDO,
+                veterinario,
+                mascota
+        );
+
+        ItemTurno item = new ItemTurno(
+                servicioPorNombre(em, "Consulta Clínica General"),
+                turno
+        );
+        DetalleConsulta detalle = new DetalleConsulta(observaciones, diagnostico);
+        detalle.agregarTratamiento(new Tratamiento(
+                inicioTratamiento,
+                finTratamiento,
+                descripcionTratamiento
+        ));
+        item.setDetalleAtencion(detalle);
+        turno.agregarItem(item);
+
+        em.persist(turno);
+    }
+
+    private static void registrarServicioSimple(EntityManager em,
+                                                Mascota mascota,
+                                                Veterinario veterinario,
+                                                Servicio servicio,
+                                                LocalDate fecha,
+                                                String observaciones) {
+
+        Turno turno = new Turno(
+                fecha.atTime(11, 0),
+                EstadoTurno.ATENDIDO,
+                veterinario,
+                mascota
+        );
+
+        ItemTurno item = new ItemTurno(servicio, turno);
+        DetalleAtencion detalle = new DetalleAtencion(observaciones);
+        item.setDetalleAtencion(detalle);
+        turno.agregarItem(item);
+
+        em.persist(turno);
+    }
+
+    // ==========================================================
     // UTILIDADES
     // ==========================================================
 
@@ -262,6 +423,41 @@ public class DataInitializer {
         return em.createQuery(
                         "SELECT r FROM Raza r WHERE r.nombre = :nombre",
                         Raza.class)
+                .setParameter("nombre", nombre)
+                .getSingleResult();
+    }
+
+    private static TipoVacuna tipoVacunaPorNombre(EntityManager em, String nombre) {
+        return em.createQuery(
+                        "SELECT tv FROM TipoVacuna tv WHERE tv.nombreComercial = :nombre",
+                        TipoVacuna.class)
+                .setParameter("nombre", nombre)
+                .getSingleResult();
+    }
+
+    private static Servicio servicioPorNombre(EntityManager em, String nombre) {
+        return em.createQuery(
+                        "SELECT s FROM Servicio s WHERE s.nombre = :nombre",
+                        Servicio.class)
+                .setParameter("nombre", nombre)
+                .getSingleResult();
+    }
+
+    private static Veterinario veterinarioPorNombre(EntityManager em,
+                                                    String nombre,
+                                                    String apellido) {
+        return em.createQuery(
+                        "SELECT v FROM Veterinario v WHERE v.nombre = :nombre AND v.apellido = :apellido",
+                        Veterinario.class)
+                .setParameter("nombre", nombre)
+                .setParameter("apellido", apellido)
+                .getSingleResult();
+    }
+
+    private static Mascota mascotaPorNombre(EntityManager em, String nombre) {
+        return em.createQuery(
+                        "SELECT m FROM Mascota m WHERE m.nombre = :nombre",
+                        Mascota.class)
                 .setParameter("nombre", nombre)
                 .getSingleResult();
     }

@@ -11,7 +11,10 @@ public class ClienteRepository extends BaseRepository<Cliente, Long> {
     }
 
     public Optional<Cliente> buscarPorDni(String dni) {
-        return em.createQuery("SELECT c FROM Cliente c WHERE c.dni = :dni", Cliente.class)
+        return em.createQuery(
+                        "SELECT c FROM Cliente c " +
+                        "WHERE REPLACE(c.dni, '.', '') = :dni",
+                        Cliente.class)
                  .setParameter("dni", dni)
                  .getResultStream()
                  .findFirst();

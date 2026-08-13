@@ -29,7 +29,8 @@ import java.util.stream.Collectors;
  */
 public class TurnoViewController {
 
-    @FXML private ComboBox<Cliente> cmbCliente;
+    @FXML private TextField txtDniCliente;
+    @FXML private Label lblClienteEncontrado;
     @FXML private ComboBox<Mascota> cmbMascota;
     @FXML private ComboBox<Veterinario> cmbVeterinario;
     @FXML private DatePicker dpFecha;
@@ -62,6 +63,8 @@ public class TurnoViewController {
 
     private TurnoController turnoController;
 
+    private Cliente clienteSeleccionado;
+
     private final ObservableList<ServicioSelection> listaServiciosSeleccionables =
             FXCollections.observableArrayList();
 
@@ -86,7 +89,7 @@ public class TurnoViewController {
 
         cargarServicios();
         configurarEstados();
-        configurarClientes();
+        configurarDniCliente();
         configurarVeterinarios();
         configurarMascotas();
         configurarFormatoCombos();
@@ -142,13 +145,74 @@ public class TurnoViewController {
     }
 
 
-    private void configurarClientes() {
+    private void configurarDniCliente() {
 
-        cmbCliente.setItems(
-                FXCollections.observableArrayList(
-                        turnoController.listarClientes()
-                )
+        txtDniCliente.textProperty().addListener((obs, oldVal, newVal) -> {
+            String soloValido = newVal.replaceAll("[^\\d.]", "");
+            if (!soloValido.equals(newVal)) {
+                txtDniCliente.setText(soloValido);
+            }
+        });
+    }
+
+
+    @FXML
+    public void buscarCliente() {
+
+        String dni = txtDniCliente.getText().trim();
+
+        if (dni.isEmpty()) {
+            mostrarAlerta("Atención", "Ingrese el DNI del dueño para buscar.");
+            return;
+        }
+
+        Optional<Cliente> resultado = turnoController.buscarClientePorDni(dni);
+
+        if (resultado.isEmpty()) {
+            mostrarAlerta("Sin resultados", "No se encontró un dueño con DNI " + dni + ".");
+            limpiarClienteSeleccionado();
+            return;
+        }
+
+        clienteSeleccionado = resultado.get();
+        lblClienteEncontrado.setText(
+                clienteSeleccionado.getNombre()
+                        + " " + clienteSeleccionado.getApellido()
         );
+
+        try {
+
+            cmbMascota.setItems(
+                    FXCollections.observableArrayList(
+                            turnoController.listarMascotasDe(clienteSeleccionado)
+                    )
+            );
+
+            cmbMascota.setDisable(false);
+
+        } catch (Exception e) {
+
+            mostrarAlerta(
+                    "Error",
+                    "No se pudieron cargar las mascotas del cliente."
+            );
+        }
+
+        cmbMascota.setValue(null);
+        configurarRestriccionesFechas();
+    }
+
+
+    private void limpiarClienteSeleccionado() {
+
+        clienteSeleccionado = null;
+        lblClienteEncontrado.setText("");
+
+        cmbMascota.getItems().clear();
+        cmbMascota.setDisable(true);
+        cmbMascota.setValue(null);
+
+        configurarRestriccionesFechas();
     }
 
 
@@ -164,43 +228,6 @@ public class TurnoViewController {
 
     private void configurarMascotas() {
 
-        cmbCliente.getSelectionModel()
-                .selectedItemProperty()
-                .addListener((obs, oldValue, cliente) -> {
-
-                    if (cliente == null) {
-
-                        cmbMascota.getItems().clear();
-                        cmbMascota.setDisable(true);
-                        cmbMascota.setValue(null);
-
-                        configurarRestriccionesFechas();
-                        return;
-                    }
-
-                    try {
-
-                        cmbMascota.setItems(
-                                FXCollections.observableArrayList(
-                                        turnoController.listarMascotasDe(cliente)
-                                )
-                        );
-
-                        cmbMascota.setDisable(false);
-
-                    } catch (Exception e) {
-
-                        mostrarAlerta(
-                                "Error",
-                                "No se pudieron cargar las mascotas del cliente."
-                        );
-                    }
-
-                    cmbMascota.setValue(null);
-                    configurarRestriccionesFechas();
-                });
-
-
         cmbMascota.getSelectionModel()
                 .selectedItemProperty()
                 .addListener((obs, oldValue, mascota) -> {
@@ -211,9 +238,6 @@ public class TurnoViewController {
 
 
     private void configurarFormatoCombos() {
-
-        cmbCliente.setCellFactory(param -> celdaGenerica());
-        cmbCliente.setButtonCell(celdaGenerica());
 
         cmbMascota.setCellFactory(param -> celdaGenerica());
         cmbMascota.setButtonCell(celdaGenerica());
@@ -587,7 +611,7 @@ public class TurnoViewController {
 
     private boolean validarFormulario() {
 
-        if (cmbCliente.getValue() == null ||
+        if (clienteSeleccionado == null ||
                 cmbMascota.getValue() == null ||
                 cmbVeterinario.getValue() == null ||
                 dpFecha.getValue() == null ||
@@ -924,9 +948,8 @@ public class TurnoViewController {
 
     private void limpiarCampos() {
 
-        cmbCliente.setValue(null);
-        cmbMascota.setValue(null);
-        cmbMascota.setDisable(true);
+        txtDniCliente.clear();
+        limpiarClienteSeleccionado();
         cmbVeterinario.setValue(null);
 
         dpFecha.setValue(null);

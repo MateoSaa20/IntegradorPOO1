@@ -21,16 +21,21 @@ public class TipoVacuna{
     @Column(nullable = false)
     private int periodicidadMeses;
 
+    @Column(name = "es_ciclica", nullable = false)
+    private boolean esCiclica;
+
     public TipoVacuna() {
     }
 
     public TipoVacuna(String nombreComercial,
                       String enfermedadQuePreviene,
-                      int periodicidadMeses) {
+                      int periodicidadMeses,
+                      boolean esCiclica) {
 
         this.nombreComercial = nombreComercial;
         this.enfermedadQuePreviene = enfermedadQuePreviene;
         this.periodicidadMeses = periodicidadMeses;
+        this.esCiclica = esCiclica;
     }
 
     public Long getId() {
@@ -59,6 +64,26 @@ public class TipoVacuna{
 
     public void setPeriodicidadMeses(int periodicidadMeses) {
         this.periodicidadMeses = periodicidadMeses;
+    }
+
+    public boolean isEsCiclica() {
+        return esCiclica;
+    }
+
+    public void setEsCiclica(boolean esCiclica) {
+        this.esCiclica = esCiclica;
+    }
+
+    /**
+     * Regla de negocio: calcula la fecha de la próxima aplicación de una
+     * vacuna cíclica. Solo las vacunas cíclicas generan recordatorio: las
+     * de dosis única o no periódicas devuelven null (no corresponde alertar).
+     */
+    public LocalDate calcularProximaAplicacion(LocalDate ultimaAplicacion) {
+        if (!esCiclica || ultimaAplicacion == null) {
+            return null;
+        }
+        return ultimaAplicacion.plusMonths(periodicidadMeses);
     }
 
     /**

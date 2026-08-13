@@ -9,6 +9,7 @@ import com.veterinaria.model.Servicio;
 import com.veterinaria.model.ServicioConsulta;
 import com.veterinaria.model.ServicioVacunacion;
 import com.veterinaria.model.Turno;
+import com.veterinaria.model.Tratamiento;
 import com.veterinaria.repository.TurnoRepository;
 import jakarta.persistence.EntityManager;
 
@@ -40,10 +41,6 @@ public class AtencionController {
      */
     public List<Turno> listarTurnosConfirmados() {
         return turnoRepository.findByEstado(EstadoTurno.CONFIRMADO);
-    }
-
-    public Turno buscarTurno(Long idTurno) {
-        return turnoRepository.buscarPorId(idTurno).orElse(null);
     }
 
     /**
@@ -120,8 +117,61 @@ public class AtencionController {
                 vacunacion.setTipoVacuna(servicio.getTipoVacuna());
             }
 
-            item.setDetalleAtencion(detalle);
+            // Si el item ya tiene un detalle persistido se reutiliza el mismo
+            // registro (se copian los campos) en lugar de reemplazarlo por uno
+            // nuevo. Reemplazarlo obligaría a borrar la fila anterior e insertar
+            // otra con el mismo id_item_turno (clave única), lo que provoca una
+            // violación de unicidad por el orden del flush.
+            DetalleAtencion actual = item.getDetalleAtencion();
+
+            if (actual == null) {
+                item.setDetalleAtencion(detalle);
+            } else {
+                copiarDetalle(actual, detalle);
+            }
         }
+    }
+
+    private void copiarDetalle(DetalleAtencion destino,
+                               DetalleAtencion origen) {
+
+        if (destino == origen) {
+            return;
+        }
+
+        if (destino instanceof DetalleConsulta destinoConsulta
+                && origen instanceof DetalleConsulta origenConsulta) {
+
+            destinoConsulta.setObservaciones(origenConsulta.getObservaciones());
+            destinoConsulta.setDiagnostico(origenConsulta.getDiagnostico());
+            destinoConsulta.setTratamientos(copiarTratamientos(
+                    origenConsulta.getTratamientos()
+            ));
+            return;
+        }
+
+        if (destino instanceof DetalleVacunacion destinoVacuna
+                && origen instanceof DetalleVacunacion origenVacuna) {
+
+            destinoVacuna.setObservaciones(origenVacuna.getObservaciones());
+            destinoVacuna.setTipoVacuna(origenVacuna.getTipoVacuna());
+            destinoVacuna.setLaboratorioOMarca(origenVacuna.getLaboratorioOMarca());
+            destinoVacuna.setObservacionesDosis(origenVacuna.getObservacionesDosis());
+            return;
+        }
+
+        destino.setObservaciones(origen.getObservaciones());
+    }
+
+    private List<Tratamiento> copiarTratamientos(List<Tratamiento> tratamientos) {
+
+        return tratamientos.stream()
+                .map(t -> new Tratamiento(
+                        t.getFechaInicio(),
+                        t.getFechaFin(),
+                        t.getDescripcion()
+                ))
+                .toList();
     }
 
     private void validarCompatibilidad(ItemTurno item,

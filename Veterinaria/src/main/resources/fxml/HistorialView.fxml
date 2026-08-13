@@ -3,11 +3,64 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane xmlns="http://javafx.com/fxml/1" xmlns:fx="http://javafx.com/fxml/1"
-           style="-fx-padding: 30;">
-    <VBox alignment="CENTER" spacing="15.0">
-        <Label text="Historial y Vacunas" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-        <Label text="Esta pantalla se encuentra en construcción."
-               style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
-    </VBox>
-</StackPane>
+<VBox spacing="12.0" xmlns="http://javafx.com/fxml/1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.veterinaria.controller.HistorialViewController"
+      style="-fx-padding: 15;">
+
+    <Label text="Historial y Vacunas" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <!-- Búsqueda por DNI del dueño -->
+    <HBox spacing="10.0" alignment="CENTER_LEFT">
+        <Label text="DNI del dueño:"/>
+        <TextField fx:id="txtDni" prefWidth="160.0" promptText="Ej: 30123456"/>
+        <Button text="Buscar" onAction="#buscarCliente"/>
+        <Label fx:id="lblCliente" style="-fx-text-fill: #2c3e50;"/>
+    </HBox>
+
+    <!-- Selección de mascota -->
+    <HBox spacing="10.0" alignment="CENTER_LEFT">
+        <Label text="Mascota:"/>
+        <ComboBox fx:id="cmbMascota" prefWidth="320.0"/>
+    </HBox>
+
+    <!-- Banner de alerta (vacunas por vencer) -->
+    <Label fx:id="lblAviso" wrapText="true" visible="false" managed="false"
+           style="-fx-background-color: #fdecea; -fx-text-fill: #c0392b; -fx-padding: 8; -fx-font-weight: bold;"/>
+
+    <TabPane>
+        <Tab text="Atenciones" closable="false">
+            <TableView fx:id="tablaAtenciones" prefHeight="420.0">
+                <columns>
+                    <TableColumn fx:id="colAtencionFecha" text="Fecha" prefWidth="140.0"/>
+                    <TableColumn fx:id="colAtencionVeterinario" text="Veterinario" prefWidth="170.0"/>
+                    <TableColumn fx:id="colAtencionServicios" text="Servicios" prefWidth="220.0"/>
+                    <TableColumn fx:id="colAtencionDetalle" text="Detalle / Diagnóstico" prefWidth="280.0"/>
+                </columns>
+            </TableView>
+        </Tab>
+        <Tab text="Vacunas" closable="false">
+            <VBox spacing="10.0" style="-fx-padding: 10;">
+                <Label text="Estado de vacunas" style="-fx-font-weight: bold;"/>
+                <TableView fx:id="tablaEstadoVacunas" prefHeight="180.0">
+                    <columns>
+                        <TableColumn fx:id="colEstVacuna" text="Vacuna" prefWidth="160.0"/>
+                        <TableColumn fx:id="colEstEnfermedad" text="Enfermedad que previene" prefWidth="200.0"/>
+                        <TableColumn fx:id="colEstUltima" text="Última aplicación" prefWidth="130.0"/>
+                        <TableColumn fx:id="colEstProxima" text="Próxima dosis" prefWidth="130.0"/>
+                        <TableColumn fx:id="colEstDias" text="Días" prefWidth="80.0"/>
+                        <TableColumn fx:id="colEstEstado" text="Estado" prefWidth="100.0"/>
+                    </columns>
+                </TableView>
+                <Label text="Aplicaciones registradas" style="-fx-font-weight: bold;"/>
+                <TableView fx:id="tablaAplicaciones" prefHeight="180.0">
+                    <columns>
+                        <TableColumn fx:id="colAplFecha" text="Fecha" prefWidth="140.0"/>
+                        <TableColumn fx:id="colAplVacuna" text="Vacuna" prefWidth="200.0"/>
+                        <TableColumn fx:id="colAplLaboratorio" text="Laboratorio / Marca" prefWidth="180.0"/>
+                        <TableColumn fx:id="colAplDosis" text="Observaciones de dosis" prefWidth="250.0"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+    </TabPane>
+</VBox>

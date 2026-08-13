@@ -82,7 +82,7 @@ public class AtencionReglasTest {
 
     @Test
     public void detalleVacunacionExigeLaboratorioODosis() {
-        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 12);
+        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 12, true);
         DetalleVacunacion detalle = new DetalleVacunacion(tipo, null, null);
 
         Exception exception = assertThrows(IllegalArgumentException.class,
@@ -93,7 +93,7 @@ public class AtencionReglasTest {
 
     @Test
     public void detalleVacunacionConLaboratorioEsValido() {
-        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 12);
+        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 12, true);
         DetalleVacunacion detalle =
                 new DetalleVacunacion(tipo, "Zoetis", null);
 
@@ -102,7 +102,7 @@ public class AtencionReglasTest {
 
     @Test
     public void detalleVacunacionConDosisEsValido() {
-        TipoVacuna tipo = new TipoVacuna("Quíntuple", "Moquillo", 12);
+        TipoVacuna tipo = new TipoVacuna("Quíntuple", "Moquillo", 12, true);
         DetalleVacunacion detalle =
                 new DetalleVacunacion(tipo, null, "1ra dosis - refuerzo a los 21 días");
 

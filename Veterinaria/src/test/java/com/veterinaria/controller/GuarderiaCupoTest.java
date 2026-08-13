@@ -4,7 +4,6 @@ import com.veterinaria.model.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,12 +30,6 @@ public class GuarderiaCupoTest {
     private Mascota m1;
     private Mascota m2;
     private Mascota m3;
-    private Mascota m4;
-
-    @AfterAll
-    public static void tearDown() {
-        // nothing to close (EMF se crea y cierra por test)
-    }
 
     @BeforeEach
     public void setUp() {
@@ -63,7 +56,6 @@ public class GuarderiaCupoTest {
         m1 = mascota("Rocky", raza);
         m2 = mascota("Pelusa", raza);
         m3 = mascota("Nala", raza);
-        m4 = mascota("Toby", raza);
         em.getTransaction().commit();
 
         controller = new TurnoController(em);

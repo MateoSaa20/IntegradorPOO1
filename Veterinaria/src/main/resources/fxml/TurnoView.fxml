@@ -15,8 +15,10 @@
             <!-- Fila 1: Cliente, Mascota y Veterinario -->
             <HBox spacing="15.0" alignment="CENTER_LEFT">
                 <HBox spacing="5.0" alignment="CENTER_LEFT">
-                    <Label text="Cliente:"/>
-                    <ComboBox fx:id="cmbCliente" prefWidth="180.0"/>
+                    <Label text="DNI Dueño:"/>
+                    <TextField fx:id="txtDniCliente" prefWidth="100.0" promptText="30.123.456"/>
+                    <Button text="Buscar" onAction="#buscarCliente"/>
+                    <Label fx:id="lblClienteEncontrado" text="" style="-fx-text-fill: gray;"/>
                 </HBox>
 
                 <HBox spacing="5.0" alignment="CENTER_LEFT">

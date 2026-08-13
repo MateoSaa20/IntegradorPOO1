@@ -264,8 +264,15 @@ public class TurnoController {
         return turnoRepository.buscarTodos();
     }
 
-    public List<Cliente> listarClientes() {
-        return clienteRepository.buscarTodos();
+    public Optional<Cliente> buscarClientePorDni(String dni) {
+        if (dni == null) {
+            return Optional.empty();
+        }
+        String normalizado = dni.trim().replace(".", "");
+        if (normalizado.isEmpty()) {
+            return Optional.empty();
+        }
+        return clienteRepository.buscarPorDni(normalizado);
     }
 
     public List<Veterinario> listarVeterinarios() {

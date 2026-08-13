@@ -1,5 +1,6 @@
 package com.veterinaria.repository;
 
+import com.veterinaria.model.DetalleVacunacion;
 import com.veterinaria.model.EstadoTurno;
 import com.veterinaria.model.Turno;
 import jakarta.persistence.EntityManager;
@@ -74,6 +75,39 @@ public class TurnoRepository extends BaseRepository<Turno, Long> {
             .setParameter("inicioDia", inicioDia)
             .setParameter("finDia", finDia)
             .getResultList();
+    }
+
+    /**
+     * Historial de atenciones de una mascota: turnos ya ATENDIDO, del más
+     * reciente al más antiguo.
+     */
+    public List<Turno> listarTurnosAtendidosDeMascota(Long numeroFicha) {
+        return em.createQuery(
+                "SELECT t FROM Turno t " +
+                "LEFT JOIN FETCH t.items it " +
+                "LEFT JOIN FETCH it.detalleAtencion " +
+                "WHERE t.mascota.numeroFicha = :ficha AND t.estado = :atendido " +
+                "ORDER BY t.fechaHora DESC",
+                Turno.class)
+                .setParameter("ficha", numeroFicha)
+                .setParameter("atendido", EstadoTurno.ATENDIDO)
+                .getResultList();
+    }
+
+    /**
+     * Vacunas aplicadas a una mascota a lo largo de su historial, del más
+     * reciente al más antiguo. Se recorre Turno -> ItemTurno -> DetalleVacunacion.
+     */
+    public List<DetalleVacunacion> listarVacunasAplicadasDeMascota(Long numeroFicha) {
+        return em.createQuery(
+                "SELECT dv FROM DetalleVacunacion dv " +
+                "JOIN FETCH dv.itemTurno it " +
+                "JOIN it.turno t " +
+                "WHERE t.mascota.numeroFicha = :ficha " +
+                "ORDER BY t.fechaHora DESC",
+                DetalleVacunacion.class)
+                .setParameter("ficha", numeroFicha)
+                .getResultList();
     }
 
 }

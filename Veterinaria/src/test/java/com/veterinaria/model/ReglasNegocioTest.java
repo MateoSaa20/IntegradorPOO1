@@ -485,7 +485,7 @@ public class ReglasNegocioTest {
     // VACUNACIÓN: PERIODICIDAD
     // ==========================================================    @Test
     public void vacunaDentroDePeriodicidadNoSePuedeRepetir() {
-        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 12);
+        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 12, true);
         LocalDate ultima = LocalDate.of(2026, 1, 10);
 
         // Nueva aplicación antes de cumplir los 12 meses
@@ -494,7 +494,7 @@ public class ReglasNegocioTest {
 
     @Test
     public void vacunaFueraDePeriodicidadSePuedeRepetir() {
-        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 12);
+        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 12, true);
         LocalDate ultima = LocalDate.of(2026, 1, 10);
 
         // Nueva aplicación luego de cumplir los 12 meses
@@ -503,7 +503,7 @@ public class ReglasNegocioTest {
 
     @Test
     public void vacunaEnLaFechaJustaDePeriodicidadSePuedeRepetir() {
-        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 12);
+        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 12, true);
         LocalDate ultima = LocalDate.of(2026, 1, 10);
 
         // Exactamente en la fecha límite: no está dentro de la ventana
@@ -512,8 +512,35 @@ public class ReglasNegocioTest {
 
     @Test
     public void vacunaSinAntecedentesNoEstaDentroDePeriodicidad() {
-        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 12);
+        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 12, true);
 
         assertFalse(tipo.estaDentroDePeriodicidad(null, LocalDate.of(2026, 9, 1)));
+    }
+
+    // ==========================================================
+    // VACUNACIÓN: PRÓXIMA APLICACIÓN (vacunas cíclicas)
+    // ==========================================================
+
+    @Test
+    public void vacunaCiclicaCalculaProximaAplicacion() {
+        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 12, true);
+        LocalDate ultima = LocalDate.of(2025, 2, 10);
+
+        assertEquals(LocalDate.of(2026, 2, 10), tipo.calcularProximaAplicacion(ultima));
+    }
+
+    @Test
+    public void vacunaNoCiclicaNoCalculaProximaAplicacion() {
+        TipoVacuna tipo = new TipoVacuna("Única", "Enfermedad X", 12, false);
+        LocalDate ultima = LocalDate.of(2025, 2, 10);
+
+        assertNull(tipo.calcularProximaAplicacion(ultima));
+    }
+
+    @Test
+    public void vacunaSinAntecedentesNoCalculaProximaAplicacion() {
+        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 12, true);
+
+        assertNull(tipo.calcularProximaAplicacion(null));
     }
 }

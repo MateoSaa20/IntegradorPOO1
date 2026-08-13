@@ -1,6 +1,5 @@
 package com.veterinaria.model;
-import java.util.ArrayList;
-import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -13,9 +12,6 @@ public class Especie {
 
     @Column(nullable = false, unique = true)
     private String nombre;
-
-    @OneToMany(mappedBy = "especie")
-    private List<Raza> razas = new ArrayList<>();
 
     public Especie() {
     }

@@ -49,10 +49,6 @@ public class Veterinario {
         }
     }
 
-    public void quitarEspecialidad(Especialidad especialidad) {
-        especialidades.remove(especialidad);
-    }
-
     /**
      * Regla de negocio: valida los campos obligatorios del veterinario y
      * normaliza nombre y apellido a formato título.

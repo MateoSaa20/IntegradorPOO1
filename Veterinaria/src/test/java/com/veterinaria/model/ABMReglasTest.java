@@ -73,7 +73,7 @@ public class ABMReglasTest {
 
     @Test
     public void vacunacionConTipoDeVacunaEsValida() {
-        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 12);
+        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 12, true);
         ServicioVacunacion servicio = new ServicioVacunacion("Vacuna Antirrábica", 9000, 15, tipo);
 
         servicio.validar();
@@ -85,28 +85,28 @@ public class ABMReglasTest {
 
     @Test
     public void tipoVacunaSinNombreLanzaExcepcion() {
-        TipoVacuna tipo = new TipoVacuna("", "Rabia", 12);
+        TipoVacuna tipo = new TipoVacuna("", "Rabia", 12, true);
 
         assertThrows(IllegalArgumentException.class, tipo::validar);
     }
 
     @Test
     public void tipoVacunaSinEnfermedadLanzaExcepcion() {
-        TipoVacuna tipo = new TipoVacuna("Rabisin", "", 12);
+        TipoVacuna tipo = new TipoVacuna("Rabisin", "", 12, true);
 
         assertThrows(IllegalArgumentException.class, tipo::validar);
     }
 
     @Test
     public void tipoVacunaConPeriodicidadInvalidaLanzaExcepcion() {
-        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 0);
+        TipoVacuna tipo = new TipoVacuna("Rabisin", "Rabia", 0, true);
 
         assertThrows(IllegalArgumentException.class, tipo::validar);
     }
 
     @Test
     public void tipoVacunaValidoNormalizaSuNombre() {
-        TipoVacuna tipo = new TipoVacuna("rabisin", "rabia", 12);
+        TipoVacuna tipo = new TipoVacuna("rabisin", "rabia", 12, true);
 
         tipo.validar();
 

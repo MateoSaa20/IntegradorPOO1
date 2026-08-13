@@ -56,11 +56,6 @@ public class Turno {
         item.setTurno(this);
     }
 
-    public void eliminarItem(ItemTurno item){
-        items.remove(item);
-        item.setTurno(null);
-    }
-
     public int calcularTiempoTotal() {
         return items.stream()
                 .mapToInt(ItemTurno::getTiempoAlMomento)

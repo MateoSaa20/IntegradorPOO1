@@ -2,9 +2,7 @@ package com.veterinaria.controller;
 
 import com.veterinaria.config.JpaUtil;
 import com.veterinaria.model.*;
-import com.veterinaria.repository.ClienteRepository;
 import com.veterinaria.repository.EspecieRepository;
-import com.veterinaria.repository.MascotaRepository;
 import com.veterinaria.repository.RazaRepository;
 import com.veterinaria.util.TextoUtil;
 import javafx.collections.FXCollections;
@@ -16,7 +14,6 @@ import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class ClienteMascotaViewController {
 
@@ -39,17 +36,13 @@ public class ClienteMascotaViewController {
     private ClienteController clienteController;
     private RazaRepository razaRepository;
     private EspecieRepository especieRepository;
-    private MascotaRepository mascotaRepository;
-    private ClienteRepository clienteRepository;
 
-    private List<Raza> todasLasRazas;
     private Cliente clienteEnEdicion = null; // Para mantener el cliente seleccionado al editar
     private Mascota mascotaEnEdicion = null; // Para mantener la mascota seleccionada al editar
    @FXML
 public void initialize() {
     EntityManager em = JpaUtil.getEntityManager();
     clienteController = new ClienteController(em);
-    clienteRepository = new ClienteRepository(em);
     especieRepository = new EspecieRepository(em);
     razaRepository = new RazaRepository(em);
 
@@ -372,8 +365,6 @@ public void editarMascota() {
     }
 
     if (!validarCamposMascota()) return;
-
-    Cliente clienteSeleccionado = tablaClientes.getSelectionModel().getSelectedItem();
 
     EntityManager em = JpaUtil.getEntityManager();
     try {

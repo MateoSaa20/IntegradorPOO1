@@ -27,6 +27,10 @@
                     <Label text="Periodicidad (meses):"/>
                     <TextField fx:id="txtPeriodicidad" prefWidth="150.0"/>
                 </HBox>
+
+                <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <CheckBox fx:id="chkCiclica" text="¿Cíclica?"/>
+                </HBox>
             </HBox>
 
             <!-- Tabla de Tipos de Vacuna -->
@@ -35,6 +39,7 @@
                     <TableColumn fx:id="colNombreComercial" text="Nombre Comercial" prefWidth="220.0"/>
                     <TableColumn fx:id="colEnfermedad" text="Enfermedad que Previene" prefWidth="320.0"/>
                     <TableColumn fx:id="colPeriodicidad" text="Periodicidad (meses)" prefWidth="160.0"/>
+                    <TableColumn fx:id="colCiclica" text="¿Cíclica?" prefWidth="100.0"/>
                 </columns>
             </TableView>
 

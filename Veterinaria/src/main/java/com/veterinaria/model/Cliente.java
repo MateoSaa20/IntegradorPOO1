@@ -61,11 +61,6 @@ public class Cliente {
         mascota.setCliente(this);
     }
 
-    public void quitarMascota(Mascota mascota) {
-        mascotas.remove(mascota);
-        mascota.setCliente(null);
-    }
-
     // ===== GETTERS =====
 
     public Long getIdCliente() {

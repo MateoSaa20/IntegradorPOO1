@@ -18,11 +18,13 @@ public class TipoVacunaViewController {
     @FXML private TextField txtNombreComercial;
     @FXML private TextField txtEnfermedad;
     @FXML private TextField txtPeriodicidad;
+    @FXML private CheckBox chkCiclica;
 
     @FXML private TableView<TipoVacuna> tablaTipoVacunas;
     @FXML private TableColumn<TipoVacuna, String> colNombreComercial;
     @FXML private TableColumn<TipoVacuna, String> colEnfermedad;
     @FXML private TableColumn<TipoVacuna, Integer> colPeriodicidad;
+    @FXML private TableColumn<TipoVacuna, String> colCiclica;
 
     private TipoVacunaController tipoVacunaController;
     private TipoVacuna tipoEnEdicion = null;
@@ -40,6 +42,11 @@ public class TipoVacunaViewController {
         colNombreComercial.setCellValueFactory(new PropertyValueFactory<>("nombreComercial"));
         colEnfermedad.setCellValueFactory(new PropertyValueFactory<>("enfermedadQuePreviene"));
         colPeriodicidad.setCellValueFactory(new PropertyValueFactory<>("periodicidadMeses"));
+        colCiclica.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(
+                        cellData.getValue().isEsCiclica() ? "Sí" : "No"
+                )
+        );
 
         tablaTipoVacunas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
@@ -51,6 +58,7 @@ public class TipoVacunaViewController {
                 txtNombreComercial.setText(tipo.getNombreComercial());
                 txtEnfermedad.setText(tipo.getEnfermedadQuePreviene());
                 txtPeriodicidad.setText(String.valueOf(tipo.getPeriodicidadMeses()));
+                chkCiclica.setSelected(tipo.isEsCiclica());
             }
         });
     }
@@ -71,7 +79,8 @@ public class TipoVacunaViewController {
             TipoVacuna nuevo = new TipoVacuna(
                     txtNombreComercial.getText().trim(),
                     txtEnfermedad.getText().trim(),
-                    Integer.parseInt(txtPeriodicidad.getText().trim())
+                    Integer.parseInt(txtPeriodicidad.getText().trim()),
+                    chkCiclica.isSelected()
             );
 
             tipoVacunaController.registrarTipoVacuna(nuevo);
@@ -97,6 +106,7 @@ public class TipoVacunaViewController {
             tipoEnEdicion.setNombreComercial(txtNombreComercial.getText().trim());
             tipoEnEdicion.setEnfermedadQuePreviene(txtEnfermedad.getText().trim());
             tipoEnEdicion.setPeriodicidadMeses(Integer.parseInt(txtPeriodicidad.getText().trim()));
+            tipoEnEdicion.setEsCiclica(chkCiclica.isSelected());
 
             tipoVacunaController.actualizar(tipoEnEdicion);
             cargarTiposVacuna();
@@ -164,6 +174,7 @@ public class TipoVacunaViewController {
         txtNombreComercial.clear();
         txtEnfermedad.clear();
         txtPeriodicidad.clear();
+        chkCiclica.setSelected(true);
         this.tipoEnEdicion = null;
         tablaTipoVacunas.getSelectionModel().clearSelection();
     }
