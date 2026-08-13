@@ -7,6 +7,7 @@ import com.veterinaria.model.DetalleVacunacion;
 import com.veterinaria.model.Especialidad;
 import com.veterinaria.model.Especie;
 import com.veterinaria.model.EstadoTurno;
+import com.veterinaria.model.ItemGuarderia;
 import com.veterinaria.model.ItemTurno;
 import com.veterinaria.model.Mascota;
 import com.veterinaria.model.Raza;
@@ -23,6 +24,8 @@ import com.veterinaria.model.Veterinario;
 import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Carga los datos iniciales de la aplicación.
@@ -40,6 +43,7 @@ public class DataInitializer {
         cargarTiposDeVacunaYServicios(em);
         cargarClientesYMascotas(em);
         cargarTurnosYVacunasEjemplo(em);
+        cargarGuarderiaCompletaEjemplo(em);
     }
 
     // ==========================================================
@@ -256,6 +260,25 @@ public class DataInitializer {
             em.persist(rocky);
             em.persist(luna);
             em.persist(michi);
+
+            // ===== Mascotas extra para la guardería de ejemplo =====
+            Mascota loki = new Mascota(
+                    "Loki",
+                    LocalDate.of(2021, 6, 15),
+                    Sexo.MACHO,
+                    caniche
+            );
+            Mascota pelu = new Mascota(
+                    "Pelu",
+                    LocalDate.of(2020, 2, 28),
+                    Sexo.HEMBRA,
+                    persa
+            );
+            pedro.agregarMascota(loki);
+            maria.agregarMascota(pelu);
+
+            em.persist(loki);
+            em.persist(pelu);
 
             // ===== Mascotas para el control de vacunaciones =====
             Cliente ana = new Cliente(
@@ -501,6 +524,69 @@ public class DataInitializer {
         turno.agregarItem(item);
 
         em.persist(turno);
+    }
+
+    // ==========================================================
+    // GUARDERÍA LLENA DE EJEMPLO (para reproducir el cupo máximo)
+    // ==========================================================
+
+    /**
+     * Llena la guardería del día siguiente: cada mascota ingresa el día
+     * "mañana" a las 09:00 y se retira a las 18:00. Con esto, cualquier
+     * intento de agendar un turno de guardería para mañana dentro de ese
+     * rango encuentra el cupo completo y lanza el error de negocio.
+     */
+    private static void cargarGuarderiaCompletaEjemplo(EntityManager em) {
+        if (hayDatos(em, "SELECT COUNT(i) FROM ItemGuarderia i")) {
+            return;
+        }
+
+        em.getTransaction().begin();
+        try {
+            ServicioGuarderia guarderia =
+                    (ServicioGuarderia) servicioPorNombre(
+                            em,
+                            "Guardería Canina/Felina (por Día)"
+                    );
+
+            Veterinario carlos = veterinarioPorNombre(em, "Carlos", "Gómez");
+            Veterinario laura = veterinarioPorNombre(em, "Laura", "Martínez");
+
+            List<Mascota> mascotas = em.createQuery(
+                            "SELECT m FROM Mascota m ORDER BY m.numeroFicha",
+                            Mascota.class)
+                    .getResultList();
+
+            LocalDate manana = LocalDate.now().plusDays(1);
+            LocalDateTime ingreso = manana.atTime(9, 0);
+            LocalDateTime salida = manana.atTime(18, 0);
+
+            for (int i = 0; i < mascotas.size(); i++) {
+                Mascota mascota = mascotas.get(i);
+
+                Turno turno = new Turno(
+                        ingreso,
+                        EstadoTurno.PENDIENTE,
+                        i % 2 == 0 ? carlos : laura,
+                        mascota
+                );
+
+                ItemGuarderia item = new ItemGuarderia(
+                        guarderia,
+                        turno,
+                        ingreso,
+                        salida
+                );
+
+                turno.agregarItem(item);
+                em.persist(turno);
+            }
+
+            em.getTransaction().commit();
+            System.out.println("✅ Guardería de ejemplo cargada (llena para mañana).");
+        } catch (Exception e) {
+            deshacer(em, "Error al cargar la guardería de ejemplo.", e);
+        }
     }
 
     // ==========================================================
