@@ -35,6 +35,11 @@ public class MainViewController {
     }
 
     @FXML
+    public void mostrarVacunaciones() {
+        cargarVista("/fxml/VacunacionView.fxml");
+    }
+
+    @FXML
     public void mostrarServicios() {
         cargarVista("/fxml/ServicioView.fxml");
     }

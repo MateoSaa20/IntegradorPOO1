@@ -209,6 +209,10 @@ public class DataInitializer {
             Raza mestizo = razaPorNombre(em, "Mestizo");
             Raza mestizoFelino = razaPorNombre(em, "Mestizo Felino");
             Raza caniche = razaPorNombre(em, "Caniche");
+            Raza labrador = razaPorNombre(em, "Labrador");
+            Raza ovejero = razaPorNombre(em, "Ovejero Alemán");
+            Raza siames = razaPorNombre(em, "Siamés");
+            Raza persa = razaPorNombre(em, "Persa");
 
             Cliente maria = new Cliente(
                     "María",
@@ -252,6 +256,66 @@ public class DataInitializer {
             em.persist(rocky);
             em.persist(luna);
             em.persist(michi);
+
+            // ===== Mascotas para el control de vacunaciones =====
+            Cliente ana = new Cliente(
+                    "Ana",
+                    "Fernández",
+                    "27555123",
+                    "11-5555-3344"
+            );
+            em.persist(ana);
+
+            Mascota rex = new Mascota(
+                    "Rex",
+                    LocalDate.of(2021, 5, 18),
+                    Sexo.MACHO,
+                    mestizo
+            );
+            Mascota simba = new Mascota(
+                    "Simba",
+                    LocalDate.of(2023, 1, 9),
+                    Sexo.MACHO,
+                    siames
+            );
+            ana.agregarMascota(rex);
+            ana.agregarMascota(simba);
+
+            Cliente diego = new Cliente(
+                    "Diego",
+                    "Silva",
+                    "33456789",
+                    "11-5555-7788"
+            );
+            em.persist(diego);
+
+            Mascota bobby = new Mascota(
+                    "Bobby",
+                    LocalDate.of(2020, 8, 30),
+                    Sexo.MACHO,
+                    labrador
+            );
+            Mascota nala = new Mascota(
+                    "Nala",
+                    LocalDate.of(2022, 4, 12),
+                    Sexo.HEMBRA,
+                    persa
+            );
+            Mascota thor = new Mascota(
+                    "Thor",
+                    LocalDate.of(2019, 11, 3),
+                    Sexo.MACHO,
+                    ovejero
+            );
+            diego.agregarMascota(bobby);
+            diego.agregarMascota(nala);
+            diego.agregarMascota(thor);
+
+            em.persist(rex);
+            em.persist(simba);
+            em.persist(bobby);
+            em.persist(nala);
+            em.persist(thor);
 
             em.getTransaction().commit();
             System.out.println("✅ Clientes y mascotas de ejemplo cargados correctamente.");
@@ -316,6 +380,35 @@ public class DataInitializer {
             // Luna: una peluquería en el historial
             registrarServicioSimple(em, luna, carlos, peluqueria, hoy.minusDays(20),
                     "Baño completo y corte sanitario.");
+
+            // ===== Vacunas de las mascotas del control de vacunaciones =====
+            // Mezcla de estados: vencidas y por vencer dentro del mes de aviso.
+            Mascota rex = mascotaPorNombre(em, "Rex");
+            Mascota simba = mascotaPorNombre(em, "Simba");
+            Mascota bobby = mascotaPorNombre(em, "Bobby");
+            Mascota nala = mascotaPorNombre(em, "Nala");
+            Mascota thor = mascotaPorNombre(em, "Thor");
+
+            // Rex: antirrábica hace ~13 meses -> VENCIDA (alerta)
+            registrarVacunacion(em, rex, carlos, servAntirrabica,
+                    hoy.minusMonths(13).minusDays(15), antirrabica,
+                    "Zoetis", "Refuerzo anual");
+            // Simba: quíntuple hace ~11 meses y 20 días -> por vencer en ~10 días (alerta)
+            registrarVacunacion(em, simba, laura, servQuintuple,
+                    hoy.minusMonths(11).minusDays(20), quintuple,
+                    "Nobivac", "1ra dosis - refuerzo anual");
+            // Bobby: antirrábica hace ~11 meses y 10 días -> por vencer en ~20 días (alerta)
+            registrarVacunacion(em, bobby, laura, servAntirrabica,
+                    hoy.minusMonths(11).minusDays(10), antirrabica,
+                    "Zoetis", "Refuerzo");
+            // Nala: quíntuple hace ~14 meses -> VENCIDA (alerta)
+            registrarVacunacion(em, nala, carlos, servQuintuple,
+                    hoy.minusMonths(14).minusDays(5), quintuple,
+                    "Nobivac", "Refuerzo anual");
+            // Thor: antirrábica hace ~11 meses y 25 días -> por vencer en ~5 días (alerta)
+            registrarVacunacion(em, thor, carlos, servAntirrabica,
+                    hoy.minusMonths(11).minusDays(25), antirrabica,
+                    "Zoetis", "1ra dosis");
 
             em.getTransaction().commit();
             System.out.println("✅ Turnos y vacunas de ejemplo cargados correctamente.");
