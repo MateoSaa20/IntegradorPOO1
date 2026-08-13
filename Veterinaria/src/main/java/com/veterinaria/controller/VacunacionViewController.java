@@ -4,6 +4,9 @@ import com.veterinaria.config.JpaUtil;
 import com.veterinaria.model.Mascota;
 import com.veterinaria.model.ServicioVacunacion;
 import com.veterinaria.model.Veterinario;
+import com.veterinaria.service.AlertaVacunacion;
+import com.veterinaria.service.EstadoVacuna;
+import com.veterinaria.service.VacunacionService;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -51,7 +54,7 @@ public class VacunacionViewController {
 
     @FXML
     public void initialize() {
-        vacunacionController = new VacunacionController(JpaUtil.getEntityManager());
+        vacunacionController = new VacunacionController(new VacunacionService(JpaUtil.getEntityManager()));
 
         configurarColumnas();
         cargarFormulario();

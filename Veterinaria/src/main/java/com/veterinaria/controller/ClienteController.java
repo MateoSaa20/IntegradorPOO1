@@ -1,100 +1,58 @@
 package com.veterinaria.controller;
 
 import com.veterinaria.model.Cliente;
+import com.veterinaria.model.Especie;
 import com.veterinaria.model.Mascota;
-import com.veterinaria.repository.ClienteRepository;
-import com.veterinaria.repository.MascotaRepository;
-import jakarta.persistence.EntityManager;
+import com.veterinaria.model.Raza;
+import com.veterinaria.service.ClienteService;
 
 import java.util.List;
 
+/**
+ * Expone las operaciones de clientes y mascotas a la capa de vista,
+ * delegando la lógica y la persistencia a la capa de servicios.
+ */
 public class ClienteController {
 
-    private final EntityManager em;
-    private final ClienteRepository clienteRepository;
-    private final MascotaRepository mascotaRepository;
+    private final ClienteService clienteService;
 
-    public ClienteController(EntityManager em) {
-        this.em = em;
-        this.clienteRepository = new ClienteRepository(em);
-        this.mascotaRepository = new MascotaRepository(em);
+    public ClienteController(ClienteService clienteService) {
+        this.clienteService = clienteService;
     }
 
     public void registrarCliente(Cliente cliente) {
-        if (cliente.getNombre() == null || cliente.getNombre().isBlank()) {
-            throw new IllegalArgumentException("El nombre del cliente no puede estar vacío.");
-        }
-        if (cliente.getDni() == null || cliente.getDni().isBlank() || !cliente.getDni().matches("\\d+") || cliente.getDni().length() > 8) {
-            throw new IllegalArgumentException("El DNI es obligatorio y debe tener hasta 8 dígitos.");
-        }
-
-        if (cliente.getTelefono() == null || cliente.getTelefono().isBlank() || !cliente.getTelefono().matches("\\d+") || cliente.getTelefono().length() > 12) {
-            throw new IllegalArgumentException("El teléfono es obligatorio y debe tener hasta 12 dígitos.");
-        }
-
-        try {
-            em.getTransaction().begin();
-            clienteRepository.guardar(cliente);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) em.getTransaction().rollback();
-            throw e;
-        }
+        clienteService.registrarCliente(cliente);
     }
 
     public void eliminar(Long id) {
-    em.getTransaction().begin();
-    try {
-        clienteRepository.buscarPorId(id).ifPresent(cliente -> {
-            clienteRepository.eliminar(cliente);
-        });
-        em.getTransaction().commit();
-    } catch (Exception e) {
-        if (em.getTransaction().isActive()) {
-            em.getTransaction().rollback();
-        }
-        throw new RuntimeException("Error al eliminar el cliente: " + e.getMessage(), e);
-    }
+        clienteService.eliminarCliente(id);
     }
 
     public Cliente actualizar(Cliente cliente) {
-    em.getTransaction().begin();
-    try {
-        Cliente clienteActualizado = clienteRepository.actualizar(cliente);
-        em.getTransaction().commit();
-        return clienteActualizado;
-    } catch (Exception e) {
-        if (em.getTransaction().isActive()) {
-            em.getTransaction().rollback();
-        }
-        throw new RuntimeException("Error al actualizar el cliente: " + e.getMessage(), e);
+        return clienteService.actualizarCliente(cliente);
     }
-}
 
     public void agregarMascotaACliente(long idCliente, Mascota mascota) {
-        mascota.validarFechaNacimiento();
+        clienteService.agregarMascotaACliente(idCliente, mascota);
+    }
 
-        try {
-            em.getTransaction().begin();
+    public void eliminarMascota(Mascota mascota) {
+        clienteService.eliminarMascota(mascota);
+    }
 
-            Cliente cliente = clienteRepository.buscarPorId(idCliente)
-                    .orElseThrow(() -> new IllegalArgumentException("No se encontró el cliente con ID: " + idCliente));
-
-            // Guardamos la mascota primero
-            mascotaRepository.guardar(mascota);
-            
-            // La agregamos a la lista del cliente (relación unidireccional)
-            cliente.getMascotas().add(mascota);
-            clienteRepository.actualizar(cliente);
-
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) em.getTransaction().rollback();
-            throw e;
-        }
+    public void actualizarMascota(Mascota mascota) {
+        clienteService.actualizarMascota(mascota);
     }
 
     public List<Cliente> listarTodos() {
-        return clienteRepository.buscarTodos();
+        return clienteService.listarClientes();
+    }
+
+    public List<Especie> listarEspecies() {
+        return clienteService.listarEspecies();
+    }
+
+    public List<Raza> listarRazasPorEspecie(Especie especie) {
+        return clienteService.listarRazasPorEspecie(especie);
     }
 }

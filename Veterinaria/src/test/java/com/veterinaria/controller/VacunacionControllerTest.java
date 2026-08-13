@@ -1,6 +1,8 @@
 package com.veterinaria.controller;
 
 import com.veterinaria.model.*;
+import com.veterinaria.service.AlertaVacunacion;
+import com.veterinaria.service.VacunacionService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -41,7 +43,7 @@ public class VacunacionControllerTest {
 
         emf = Persistence.createEntityManagerFactory("VeterinariaPU", props);
         em = emf.createEntityManager();
-        controller = new VacunacionController(em);
+        controller = new VacunacionController(new VacunacionService(em));
 
         Especie canino = new Especie("Canino");
         Raza raza = new Raza("Mestizo", canino);

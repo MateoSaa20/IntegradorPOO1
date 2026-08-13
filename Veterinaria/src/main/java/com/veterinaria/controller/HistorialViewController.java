@@ -8,6 +8,8 @@ import com.veterinaria.model.Mascota;
 import com.veterinaria.model.ItemGuarderia;
 import com.veterinaria.model.Turno;
 import com.veterinaria.model.Veterinario;
+import com.veterinaria.service.EstadoVacuna;
+import com.veterinaria.service.HistorialService;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -62,7 +64,7 @@ public class HistorialViewController {
 
     @FXML
     public void initialize() {
-        historialController = new HistorialController(JpaUtil.getEntityManager());
+        historialController = new HistorialController(new HistorialService(JpaUtil.getEntityManager()));
 
         txtDni.textProperty().addListener((obs, oldVal, newVal) -> {
             String soloValido = newVal.replaceAll("[^\\d.]", "");

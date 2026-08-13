@@ -1,81 +1,38 @@
 package com.veterinaria.controller;
 
 import com.veterinaria.model.TipoVacuna;
-import com.veterinaria.repository.TipoVacunaRepository;
-import jakarta.persistence.EntityManager;
+import com.veterinaria.service.TipoVacunaService;
 
 import java.util.List;
 
 /**
  * Orquesta las operaciones sobre los tipos de vacuna aplicando las reglas
- * de negocio:
+ * de negocio delegadas a la capa de servicios:
  * - El nombre comercial y la enfermedad que previene son obligatorios.
  * - La periodicidad debe ser mayor a cero.
  * - Un tipo de vacuna usado en un servicio o ya aplicado no puede eliminarse.
  */
 public class TipoVacunaController {
 
-    private final EntityManager em;
-    private final TipoVacunaRepository tipoVacunaRepository;
+    private final TipoVacunaService tipoVacunaService;
 
-    public TipoVacunaController(EntityManager em) {
-        this.em = em;
-        this.tipoVacunaRepository = new TipoVacunaRepository(em);
+    public TipoVacunaController(TipoVacunaService tipoVacunaService) {
+        this.tipoVacunaService = tipoVacunaService;
     }
 
     public void registrarTipoVacuna(TipoVacuna tipoVacuna) {
-        tipoVacuna.validar();
-
-        try {
-            em.getTransaction().begin();
-            tipoVacunaRepository.guardar(tipoVacuna);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw e;
-        }
+        tipoVacunaService.registrarTipoVacuna(tipoVacuna);
     }
 
     public TipoVacuna actualizar(TipoVacuna tipoVacuna) {
-        tipoVacuna.validar();
-
-        try {
-            em.getTransaction().begin();
-            TipoVacuna actualizado = tipoVacunaRepository.actualizar(tipoVacuna);
-            em.getTransaction().commit();
-            return actualizado;
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw e;
-        }
+        return tipoVacunaService.actualizarTipoVacuna(tipoVacuna);
     }
 
     public void eliminar(Long idTipoVacuna) {
-        if (idTipoVacuna == null || tipoVacunaRepository.tieneUso(idTipoVacuna)) {
-            throw new IllegalArgumentException(
-                    "No se puede eliminar un tipo de vacuna que esté asociado a un servicio o ya haya sido aplicado."
-            );
-        }
-
-        try {
-            em.getTransaction().begin();
-            tipoVacunaRepository.buscarPorId(idTipoVacuna).ifPresent(tipoVacuna -> {
-                tipoVacunaRepository.eliminar(tipoVacuna);
-            });
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw e;
-        }
+        tipoVacunaService.eliminarTipoVacuna(idTipoVacuna);
     }
 
     public List<TipoVacuna> listarTodos() {
-        return tipoVacunaRepository.buscarTodos();
+        return tipoVacunaService.listarTiposVacuna();
     }
 }

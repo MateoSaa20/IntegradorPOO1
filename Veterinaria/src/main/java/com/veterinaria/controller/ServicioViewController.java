@@ -2,6 +2,7 @@ package com.veterinaria.controller;
 
 import com.veterinaria.config.JpaUtil;
 import com.veterinaria.model.*;
+import com.veterinaria.service.ServicioService;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -42,7 +43,7 @@ public class ServicioViewController {
 
     @FXML
     public void initialize() {
-        servicioController = new ServicioController(JpaUtil.getEntityManager());
+        servicioController = new ServicioController(new ServicioService(JpaUtil.getEntityManager()));
 
         cmbTipo.setItems(FXCollections.observableArrayList(TipoServicio.values()));
         cmbTipo.setValue(TipoServicio.CONSULTA);

@@ -1,6 +1,8 @@
 package com.veterinaria.controller;
 
 import com.veterinaria.model.*;
+import com.veterinaria.service.EstadoVacuna;
+import com.veterinaria.service.HistorialService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -37,7 +39,7 @@ public class HistorialControllerTest {
 
         emf = Persistence.createEntityManagerFactory("VeterinariaPU", props);
         em = emf.createEntityManager();
-        controller = new HistorialController(em);
+        controller = new HistorialController(new HistorialService(em));
 
         Especie canino = new Especie("Canino");
         Raza raza = new Raza("Mestizo", canino);

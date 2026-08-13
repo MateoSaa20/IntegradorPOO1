@@ -2,6 +2,7 @@ package com.veterinaria.controller;
 
 import com.veterinaria.config.JpaUtil;
 import com.veterinaria.model.*;
+import com.veterinaria.service.TurnoService;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -85,7 +86,7 @@ public class TurnoViewController {
     @FXML
     public void initialize() {
 
-        turnoController = new TurnoController(JpaUtil.getEntityManager());
+        turnoController = new TurnoController(new TurnoService(JpaUtil.getEntityManager()));
 
         cargarServicios();
         configurarEstados();

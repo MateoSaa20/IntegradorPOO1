@@ -2,6 +2,7 @@ package com.veterinaria.controller;
 
 import com.veterinaria.config.JpaUtil;
 import com.veterinaria.model.*;
+import com.veterinaria.service.AtencionService;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -87,7 +88,7 @@ public class AtencionViewController {
     @FXML
     public void initialize() {
 
-        atencionController = new AtencionController(JpaUtil.getEntityManager());
+        atencionController = new AtencionController(new AtencionService(JpaUtil.getEntityManager()));
 
         configurarColumnasTurnos();
         configurarColumnasItems();

@@ -1,4 +1,4 @@
-package com.veterinaria.controller;
+package com.veterinaria.service;
 
 import com.veterinaria.model.TipoVacuna;
 

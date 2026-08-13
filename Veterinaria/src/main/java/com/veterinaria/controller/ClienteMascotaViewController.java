@@ -2,15 +2,13 @@ package com.veterinaria.controller;
 
 import com.veterinaria.config.JpaUtil;
 import com.veterinaria.model.*;
-import com.veterinaria.repository.EspecieRepository;
-import com.veterinaria.repository.RazaRepository;
+import com.veterinaria.service.ClienteService;
 import com.veterinaria.util.TextoUtil;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -34,22 +32,17 @@ public class ClienteMascotaViewController {
     @FXML private TableColumn<Mascota, LocalDate> colFechaNac;
 
     private ClienteController clienteController;
-    private RazaRepository razaRepository;
-    private EspecieRepository especieRepository;
 
     private Cliente clienteEnEdicion = null; // Para mantener el cliente seleccionado al editar
     private Mascota mascotaEnEdicion = null; // Para mantener la mascota seleccionada al editar
    @FXML
 public void initialize() {
-    EntityManager em = JpaUtil.getEntityManager();
-    clienteController = new ClienteController(em);
-    especieRepository = new EspecieRepository(em);
-    razaRepository = new RazaRepository(em);
+    clienteController = new ClienteController(new ClienteService(JpaUtil.getEntityManager()));
 
    // =========================================================
     // 1. CARGAR Y CONFIGURAR EL COMBOBOX DE ESPECIES
     // =========================================================
-    List<Especie> especies = especieRepository.buscarTodos();
+    List<Especie> especies = clienteController.listarEspecies();
     cmbEspecie.setItems(FXCollections.observableArrayList(especies));
 
     // CellFactory: Formato para la lista desplegable de Especie
@@ -78,7 +71,7 @@ public void initialize() {
 cmbEspecie.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, especieSeleccionada) -> {
     if (especieSeleccionada != null) {
         // 💡 Pasamos la entidad Especie entera en lugar de solo su ID
-        List<Raza> razas = razaRepository.buscarPorEspecie(especieSeleccionada);
+        List<Raza> razas = clienteController.listarRazasPorEspecie(especieSeleccionada);
         
         cmbRaza.setItems(FXCollections.observableArrayList(razas));
         cmbRaza.setDisable(false); // Habilita el ComboBox
@@ -330,15 +323,8 @@ public void eliminarMascota() {
     Optional<ButtonType> result = confirm.showAndWait();
 
     if (result.isPresent() && result.get() == ButtonType.YES) {
-        EntityManager em = JpaUtil.getEntityManager();
         try {
-            em.getTransaction().begin();
-
-            // 💡 Re-asociamos la entidad al EntityManager antes de borrarla
-            Mascota aEliminar = em.merge(seleccionada);
-            em.remove(aEliminar);
-
-            em.getTransaction().commit();
+            clienteController.eliminarMascota(seleccionada);
 
             // Si la lista del cliente en memoria tiene la mascota, la removemos también localmente
             if (clienteSeleccionado != null) {
@@ -350,9 +336,6 @@ public void eliminarMascota() {
             mostrarAlerta("Éxito", "Mascota eliminada correctamente.");
 
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
             mostrarAlerta("Error", "No se pudo eliminar la mascota: " + e.getMessage());
         }
     }
@@ -366,17 +349,13 @@ public void editarMascota() {
 
     if (!validarCamposMascota()) return;
 
-    EntityManager em = JpaUtil.getEntityManager();
     try {
-        em.getTransaction().begin();
-        
         mascotaEnEdicion.setNombre(txtMascotaNombre.getText().trim());
         mascotaEnEdicion.setSexo(cmbSexo.getValue());
         mascotaEnEdicion.setRaza(cmbRaza.getValue());
         mascotaEnEdicion.setFechaNacimiento(dpFechaNacimiento.getValue());
 
-        em.merge(mascotaEnEdicion);
-        em.getTransaction().commit();
+        clienteController.actualizarMascota(mascotaEnEdicion);
 
         tablaMascotas.refresh(); // Refresca la tabla para mostrar los cambios
 
@@ -386,9 +365,6 @@ public void editarMascota() {
         mostrarAlerta("Éxito", "Mascota actualizada correctamente.");
 
     } catch (Exception e) {
-        if (em.getTransaction().isActive()) {
-            em.getTransaction().rollback();
-        }
         mostrarAlerta("Error", "No se pudo actualizar la mascota: " + e.getMessage());
     }
 }

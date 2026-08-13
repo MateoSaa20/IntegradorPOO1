@@ -2,6 +2,7 @@ package com.veterinaria.controller;
 
 import com.veterinaria.config.JpaUtil;
 import com.veterinaria.model.TipoVacuna;
+import com.veterinaria.service.TipoVacunaService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -31,7 +32,7 @@ public class TipoVacunaViewController {
 
     @FXML
     public void initialize() {
-        tipoVacunaController = new TipoVacunaController(JpaUtil.getEntityManager());
+        tipoVacunaController = new TipoVacunaController(new TipoVacunaService(JpaUtil.getEntityManager()));
 
         txtPeriodicidad.textProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal.matches("\\d*")) {

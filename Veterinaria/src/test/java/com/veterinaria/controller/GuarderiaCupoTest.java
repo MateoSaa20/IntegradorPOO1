@@ -1,6 +1,7 @@
 package com.veterinaria.controller;
 
 import com.veterinaria.model.*;
+import com.veterinaria.service.TurnoService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -58,7 +59,7 @@ public class GuarderiaCupoTest {
         m3 = mascota("Nala", raza);
         em.getTransaction().commit();
 
-        controller = new TurnoController(em);
+        controller = new TurnoController(new TurnoService(em));
     }
 
     private Mascota mascota(String nombre, Raza raza) {

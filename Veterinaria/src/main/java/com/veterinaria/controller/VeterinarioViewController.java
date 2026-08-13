@@ -4,6 +4,7 @@ import com.veterinaria.config.JpaUtil;
 import com.veterinaria.model.Especialidad;
 import com.veterinaria.model.Veterinario;
 import com.veterinaria.util.TextoUtil;
+import com.veterinaria.service.VeterinarioService;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -49,7 +50,7 @@ public class VeterinarioViewController {
 
     @FXML
     public void initialize() {
-        veterinarioController = new VeterinarioController(JpaUtil.getEntityManager());
+        veterinarioController = new VeterinarioController(new VeterinarioService(JpaUtil.getEntityManager()));
 
         cargarEspecialidades();
         configurarColumnasEspecialidades();

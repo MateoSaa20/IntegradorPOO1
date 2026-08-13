@@ -15,6 +15,10 @@ public class BaseRepository<T, ID> {
         this.entityClass = entityClass;
     }
 
+    public EntityManager getEntityManager() {
+        return em;
+    }
+
     public T guardar(T entidad) {
         em.persist(entidad);
         return entidad;
